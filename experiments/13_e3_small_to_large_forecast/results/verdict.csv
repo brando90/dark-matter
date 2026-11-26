@@ -1,0 +1,3 @@
+arm,ladders_at_10x,ladders_with_gain,ladders_with_loss,median_ladder_gain,ladders_vs_drop2,median_rmse_minus_drop2,cond_i,cond_ii,cond_iii,verdict
+e1_strict,3,3,0,0.012295172547763578,3,0.04852392748627448,True,True,False,NOT ESTABLISHED: (iii) worse than drop2 on the largest third
+e1_common,4,2,2,-0.002252750707794071,3,0.032880258062926895,False,False,False,NOT ESTABLISHED: (i) fewer than 3 ladders gain; (ii) median gain < 0.005; (iii) worse than drop2 on the largest third

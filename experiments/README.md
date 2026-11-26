@@ -23,5 +23,7 @@ This is the constraint in `fit_two_term_N_only` and `py_src/conjecture_fits.py` 
 | `07_power_analysis` | sizes, \(N\) range, and noise needed before held-out RMSE sees the slow term | Grok |
 | `08_public_ladders` | Epoch Figure 4, Pythia Pile val, Porian, C4 scaling; same holdout as 01 | Grok |
 | `11_e5_embedding_ladder_runs` | E5: raw results and PREREG analysis of the DM-4 embedding ladder run on Sherlock (phase 1 queued 11-25) | ub9sc |
+| `12_e1_profiled_param_count` | E1: profiled embedding weight c (N_c = N_nonemb + c N_emb) on Porian rw/owt2, Chinchilla, Pythia; one-c and tiny-model-return verdicts (PREREG, verify, results.md) | ub9sc |
+| `13_e3_small_to_large_forecast` | E3: DM-5 rolling-origin forecast with the E1 count correction (strict and shared c) vs 1-term, Drop1/2, LRT 2-term | ub9sc |
 
 `RESULTS.md` summarizes the numbered CPU experiments. They record the protocol in each README; a PREREG file was not committed before the fits.

@@ -1,0 +1,5 @@
+[PASS] 1 fold counts / NaN: 48 folds (expected 48), 2940 rows (expected 2940), NaN in defined predictions 0, e1_strict defined exactly for k >= 5: True
+[PASS] 2 positive control: planted c = 0.3, arm 1 uses c = 2: median gain of e1_strict at >= 10x 0.0567 nats over 60 pairs (|err| 0.0574 vs one 0.0994)
+[PASS] 3 null control: planted c = 2 = c_std: median gain -0.0119 nats over 60 pairs (|err| 0.0431 vs one 0.0342)
+[PASS] 4 no peeking (held-out y perturbed by sd 0.5): predictions and chosen c unchanged: True
+ALL PASS

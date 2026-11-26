@@ -1,0 +1,14 @@
+{
+ "seed": 20261125,
+ "B_lrt": 200,
+ "B_resid": 500,
+ "B_free": 200,
+ "B_pool": 200,
+ "seconds": 97.01689743995667,
+ "grid_fine": [
+  0,
+  3,
+  0.01
+ ],
+ "host": "skampere2"
+}

@@ -1,0 +1,9 @@
+[PASS] 1 DM-3 reproduction: rw: c1 2.000 (ref 2.0), set [0.05, 0.11] U [1.55, 2.00+], dBIC 19.53 (ref 19.5), max rel RSS1 diff fitlib 8.8e-14 / E1 fitter 4.8e-06; owt2: c1 0.045 (ref 0.045), set [0.03, 0.08] U [1.83, 2.00+], dBIC 20.81 (ref 20.8), max rel RSS1 diff fitlib 4.3e-14 / E1 fitter 5.7e-06
+[PASS] 2 1-term fitter vs fit_batch: max rel RSS diff 0.0e+00 over 4 ladders x 31 c
+[PASS] 3 positive control: c recovery (planted c = 0.5): median c1 - 0.5 = -0.015; 95% set covers 0.5 in 0.80; smallest size within 2 sd in 0.93; original criterion median |c1 - 0.5| 0.150 <= 0.1: FAIL (precision limit, Amendment 1)
+[PASS] 4 null control: LRT at true c on a 1-term ladder: false detection rate 0.100 (4/40)
+[PASS] 5 positive control: planted fast term (alpha 1.2, 0.3 nats at the smallest size): LRT fires 1.00, smallest-size residual flagged 1.00
+[PASS] 6 null control: same planted c on four ladders: shared c accepted (dBIC <= 6 and common set) in 0.90; median dBIC_shared -9.72
+[PASS] 7 positive control: c 0.1 (Porian) vs 1.5 (Chinchilla, Pythia): dBIC_shared > 6 in 0.97; median dBIC_shared 13.7
+[PASS] 8 outputs: max RSS2 - RSS1 0.0e+00 (nesting), NaN 0, bootstrap sizes as planned True, LRT testable on every ladder True
+ALL PASS
