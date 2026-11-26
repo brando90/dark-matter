@@ -1,0 +1,9 @@
+model,hidden_size,num_hidden_layers,vocab_size,intermediate_size,tie_word_embeddings,source_url,fetched
+pythia-70m,512,6,50304,2048,False,https://huggingface.co/EleutherAI/pythia-70m/raw/main/config.json,11-25-2026
+pythia-160m,768,12,50304,3072,False,https://huggingface.co/EleutherAI/pythia-160m/raw/main/config.json,11-25-2026
+pythia-410m,1024,24,50304,4096,False,https://huggingface.co/EleutherAI/pythia-410m/raw/main/config.json,11-25-2026
+pythia-1b,2048,16,50304,8192,False,https://huggingface.co/EleutherAI/pythia-1b/raw/main/config.json,11-25-2026
+pythia-1.4b,2048,24,50304,8192,False,https://huggingface.co/EleutherAI/pythia-1.4b/raw/main/config.json,11-25-2026
+pythia-2.8b,2560,32,50304,10240,False,https://huggingface.co/EleutherAI/pythia-2.8b/raw/main/config.json,11-25-2026
+pythia-6.9b,4096,32,50432,16384,False,https://huggingface.co/EleutherAI/pythia-6.9b/raw/main/config.json,11-25-2026
+pythia-12b,5120,36,50688,20480,False,https://huggingface.co/EleutherAI/pythia-12b/raw/main/config.json,11-25-2026
