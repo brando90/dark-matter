@@ -21,6 +21,7 @@ All five runs finished on CPU (Python 3.12.3, numpy / scipy / pandas / matplotli
 7. **Power.** For the separated truth from experiment 05, no cell with up to 64 sizes, a \(10^{4}\) range in \(N\), and log-noise down to 0.5% meets the pre-set rule (80% win rate and a 0.01 nat median held-out gap). The best cell wins 16/16 but the median gap is 0.0066 nats. With no noise the same 64-size, \(10^{4}\) ladder has a 0.0165 nat gap, so the signal is real and smaller than 0.5% noise.
 8. **Public ladders.** On the Epoch Figure 4 extraction at \(D/N \approx 20\) the two-term fit collapses and the held-out RMSE matches the single term (0.0493). On Pythia final Pile validation loss the single term predicts 6.9B and 12B to 0.006 nats and the second term turns off. On Porian rw and owt2 the two-term power does not help, but a log correction cuts RMSE from about 0.08 to about 0.026 on two held-out sizes. The C4 ladder has only 4 training sizes, so the two-term model is saturated.
 9. **Other forms.** Huber AIC/BIC pick the single term on every N-only ladder and the five-parameter joint law on both run clouds, because the training objective drops by \(\sim 10^{-4}\) when a parameter is added. A second power of \(D\) collapses. Broken power wins held-out RMSE only on the ColPret Chinchilla coordinates (0.039 vs 0.057) and is the worst model on the Epoch extraction (0.120 vs 0.049).
+10. **Tiny \(N\).** A single-term fit on the large end underpredicts every one of the smallest 20% of Chinchilla sizes (mean residual \(+0.087\) nats) and every one of the smallest 20% of Epoch sizes (\(+0.110\)). A two-term fit on that same large end collapses on Epoch and does not remove the gap. Pythia and Porian change sign when the cutoff moves from 20% to 40%, so the tiny-end miss is not stable there.
 
 ## What the negative results are not
 
@@ -41,6 +42,8 @@ They are not an optimizer failure. L-BFGS returned `success=True` on every fit c
 - Experiment 03: the \(\log D\) quadratic \(R^2\) of 0.32 on joint residuals falls to 0.075 after dropping two residuals above 0.5. The summary quotes both.
 - Experiment 04: bootstrap intervals are stability checks. The runs share a recipe, so they are not confidence intervals.
 - Experiment 05: held-out sizes are the largest 7 of 36, fixed before scoring. Paired win rates are computed per replicate, not by comparing marginal medians (those medians differ because a few bad two-term fits have a heavy tail).
+- Experiment 09: test RMSE recomputed from `predictions.csv` matches `metrics.csv`. AIC/BIC use the training Huber objective only. The second \(D\) term's slow-fraction of 1.0 is why it is marked collapsed.
+- Experiment 10: the small end is strictly smaller than the training sizes. Mean residuals recomputed from `small_end_predictions.csv` match `metrics.csv`. Pythia's 40% split trains on 5 sizes, so the two-term model has 0 degrees of freedom and is marked saturated.
 
 ## Cluster
 
