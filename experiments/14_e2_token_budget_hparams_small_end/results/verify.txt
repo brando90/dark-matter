@@ -1,0 +1,5 @@
+[PASS] 1 reproduction: rw X_5M(TC20) +0.3473 vs DM-2 +0.347; rw TC20 vs curves.csv max |dy| 0.0e+00 (14 sizes); rw BC20 vs curves.csv max |dy| 0.0e+00 (14 sizes); owt2 X_5M(TC20) +0.3707 vs DM-2 +0.371; owt2 TC20 vs curves.csv max |dy| 0.0e+00 (14 sizes); owt2 BC20 vs curves.csv max |dy| 0.0e+00 (14 sizes)
+[FAIL] 2 positive control (data term only): J EXPLAINS at 5M in 0.20, M_5M RETURNS in 0.85 of 20 (median X +0.114, X^J +0.005)
+[FAIL] 3 null control (planted fast N term): J not EXPLAINS in 0.85, M_5M STAYS OFF in 0.50 of 20 (median X +0.441, X^J +0.304)
+[PASS] 4 arithmetic: max |error| 0.0e+00 over 19 identities
+SOME FAIL
