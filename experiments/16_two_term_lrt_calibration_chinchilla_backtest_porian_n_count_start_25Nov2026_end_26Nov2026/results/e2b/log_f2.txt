@@ -1,0 +1,27 @@
+[E2b f2_drop_DN_lt_1] keep 234 of 245; dropped 11 runs with D/N < 1.0: N=1.26e+10 D=8.06e+09 (D/N 0.64), N=1.27e+09 D=1.23e+09 (D/N 0.97), N=1.43e+09 D=1.13e+09 (D/N 0.79), N=1.61e+09 D=1.01e+09 (D/N 0.63), N=1.73e+09 D=8.75e+08 (D/N 0.51), N=1.79e+09 D=8.2e+08 (D/N 0.46), N=2.01e+09 D=8.1e+08 (D/N 0.40), N=2.28e+09 D=7.03e+08 (D/N 0.31), N=2.64e+09 D=6.16e+08 (D/N 0.23), N=2.98e+09 D=5.16e+08 (D/N 0.17), N=6.8e+09 D=2.45e+08 (D/N 0.04)
+[E2b] free joint fit on the subset: E=1.79 + 501.7/N^0.3499 + 1199/D^0.3392 | huber 8.3712e-04 | a_opt 0.4922 (0s)
+[E2a] split N q=0.4: train 99 / test 135  (13.4s)
+[E2a] split N q=0.5: train 118 / test 116  (16.2s)
+[E2a] split N q=0.6: train 144 / test 90  (24.1s)
+[E2a] split N q=0.7: train 167 / test 67  (28.6s)
+[E2a] split D q=0.4: train 94 / test 140  (2.6s)
+[E2a] split D q=0.5: train 117 / test 117  (4.1s)
+[E2a] split D q=0.6: train 140 / test 94  (4.0s)
+[E2a] split D q=0.7: train 164 / test 70  (21.1s)
+[E2a] split C q=0.4: train 94 / test 140  (8.0s)
+[E2a] split C q=0.5: train 117 / test 117  (7.1s)
+[E2a] split C q=0.6: train 140 / test 94  (5.9s)
+[E2a] split C q=0.7: train 164 / test 70  (17.2s)
+[E2c] cap 4.0 joint: E=1.79 + 501.7/N^0.3499 + 1199/D^0.3392 | huber 8.3712e-04 | flags none
+[E2c] cap 4.0 +N dark: E=1.79 + 2.382e-13/N^0.5374 + 1199/D^0.3392 + 501.7/N^0.3499 | huber 8.3712e-04 | flags none
+[E2c] cap 4.0 +D dark: E=7.319e-07 + 537.4/N^0.3539 + 7.435e+06/D^0.7931 + 5.522/D^0.04013 | huber 7.4801e-04 | flags E~0
+[E2c] cap 4.0 +both dark: E=3.645e-06 + 537.4/N^0.3539 + 7.435e+06/D^0.7931 + 8.683e-13/N^0.3328 + 5.522/D^0.04013 | huber 7.4801e-04 | flags E~0
+[E2c] cap 1.5 joint: E=1.79 + 501.7/N^0.3499 + 1199/D^0.3392 | huber 8.3712e-04 | flags none
+[E2c] cap 1.5 +N dark: E=1.79 + 2.382e-13/N^0.5374 + 1199/D^0.3392 + 501.7/N^0.3499 | huber 8.3712e-04 | flags none
+[E2c] cap 1.5 +D dark: E=1.703e-06 + 537.4/N^0.3539 + 7.435e+06/D^0.7931 + 5.522/D^0.04013 | huber 7.4801e-04 | flags E~0
+[E2c] cap 1.5 +both dark: E=3.653e-06 + 1.957e-12/N^0.9175 + 7.435e+06/D^0.7931 + 537.4/N^0.3539 + 5.522/D^0.04013 | huber 7.4801e-04 | flags E~0
+[E2b f2_drop_DN_lt_1] cap 4.0: median held-out error by axis {"N": {"+D dark": 0.010968480109028296, "+N dark": 0.01668449282681584, "+both dark": 0.01649371676702556, "joint": 0.010950741107499856, "repo": 0.010454624713956247}, "D": {"+D dark": 0.008063111090980802, "+N dark": 0.010002800562477375, "+both dark": 0.008063102202114062, "joint": 0.010002802274733116, "repo": 0.00817336995217538}, "C": {"+D dark": 0.009481868612342936, "+N dark": 0.009879976570796579, "+both dark": 0.00987997728728086, "joint": 0.009484203787098001, "repo": 0.009380266215764337}}
+[E2b f2_drop_DN_lt_1] cap 4.0: wins vs joint {'+N dark': 3, '+D dark': 10, '+both dark': 5} of 12; joint beats repo 0.33; boundary flags {'joint': 0, '+N dark': 6, '+D dark': 4, '+both dark': 9}
+[E2b f2_drop_DN_lt_1] cap 1.5: median held-out error by axis {"N": {"+D dark": 0.010915116402251634, "+N dark": 0.019416830676849194, "+both dark": 0.019485388660595987, "joint": 0.010950741039904862, "repo": 0.010454624713956247}, "D": {"+D dark": 0.008063103037613754, "+N dark": 0.010002801932488294, "+both dark": 0.008063228317317586, "joint": 0.01000280153291028, "repo": 0.00817336995217538}, "C": {"+D dark": 0.009481869612274166, "+N dark": 0.009996842900012974, "+both dark": 0.00999684128318512, "joint": 0.009484203719016707, "repo": 0.009380266215764337}}
+[E2b f2_drop_DN_lt_1] cap 1.5: wins vs joint {'+N dark': 3, '+D dark': 6, '+both dark': 6} of 12; joint beats repo 0.33; boundary flags {'joint': 0, '+N dark': 6, '+D dark': 4, '+both dark': 9}
+[E2b f2_drop_DN_lt_1] done in 165s

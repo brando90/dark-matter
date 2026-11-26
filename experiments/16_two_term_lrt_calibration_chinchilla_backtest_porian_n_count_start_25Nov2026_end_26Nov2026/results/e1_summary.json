@@ -1,0 +1,278 @@
+{
+  "chi2_2_crit_95": 5.991464547107979,
+  "K": 10,
+  "K_train": 7,
+  "tie_tol": 1e-06,
+  "noiseless_two_term_truth_one_term_fit": {
+    "E": 1.8212981845331184,
+    "alpha": 0.37053565158427876,
+    "max_abs_log_resid": 0.00313520203462736,
+    "rms_log_resid": 0.001985798749467951
+  },
+  "settings": {
+    "sigma=0.003": {
+      "n_H0": 150,
+      "n_H1": 100,
+      "repo_stat_H0_median": 3.987194707793743e-08,
+      "repo_stat_H0_q95": 1.0048548217808199e-05,
+      "repo_stat_H1_median": 1.4754690668574271e-05,
+      "repo_pvalue_H0_median": 0.9999999800640267,
+      "repo_pvalue_H1_median": 0.9999926226818783,
+      "repo_nominal_false_positive_rate": 0.0,
+      "repo_nominal_power": 0.0,
+      "repo_corrected_power": 0.66,
+      "repo_auc": 0.8993333333333333,
+      "gauss_stat_H0_median": 0.08515314096454474,
+      "gauss_stat_H0_q95": 5.93193292743271,
+      "gauss_stat_H1_median": 6.443986326337167,
+      "gauss_nominal_false_positive_rate": 0.05333333333333334,
+      "gauss_nominal_power": 0.6,
+      "gauss_corrected_power": 0.6,
+      "gauss_auc": 0.9004333333333333,
+      "gauss_nominal_false_positive_count": [
+        8,
+        150
+      ],
+      "gauss_nominal_false_positive_ci95": [
+        0.027269212890132462,
+        0.1017050047467096
+      ],
+      "gauss_stat_H0_zero_share": 0.43333333333333335,
+      "train7_gauss_nominal_false_positive_count": [
+        15,
+        150
+      ],
+      "train7_gauss_nominal_false_positive_rate": 0.1,
+      "train7_gauss_nominal_false_positive_ci95": [
+        0.06154083683597323,
+        0.15843607448060176
+      ],
+      "train7_gauss_stat_H0_zero_share": 0.5066666666666667,
+      "two_term_corner_rate_H0": 0.2866666666666667,
+      "two_term_corner_rate_H1": 0.35,
+      "two_term_boundary_H0": {
+        "coef_at_cap": 0.12666666666666668,
+        "E_near_zero": 0.03333333333333333,
+        "shallow_exp_below_0p02": 0.2866666666666667,
+        "any_boundary": 0.41333333333333333
+      },
+      "two_term_boundary_H1": {
+        "coef_at_cap": 0.16,
+        "E_near_zero": 0.21,
+        "shallow_exp_below_0p02": 0.34,
+        "any_boundary": 0.5
+      },
+      "H1_alpha_hat_median_IQR": [
+        0.5867996714542583,
+        0.47390695564790514,
+        1.2913469953494259
+      ],
+      "H1_beta_hat_median_IQR": [
+        0.23168387359955595,
+        0.01494251178592857,
+        0.33592771053390763
+      ],
+      "H1_ratio_hat_median_IQR": [
+        0.1315971717447224,
+        0.030365038862152055,
+        0.31807648630369156
+      ],
+      "H1_frac_beta_within_0.05_of_truth": 0.08,
+      "backtest_H0": {
+        "always_1term": {
+          "median": 0.002769660597667924,
+          "mean": 0.0038781702836765118,
+          "q90": 0.008281977816590376
+        },
+        "always_2term": {
+          "median": 0.00487677146191076,
+          "mean": 0.006829511860532259,
+          "q90": 0.01612037258010008
+        },
+        "gated": {
+          "median": 0.0028527956527086883,
+          "mean": 0.004412025148124612,
+          "q90": 0.009355697491180431
+        },
+        "two_term_wins_ties_losses": [
+          17,
+          80,
+          53
+        ],
+        "sign_test_p_wins_vs_losses": 1.919969240032143e-05,
+        "median_error_ratio_2term_vs_1term": {
+          "value": 0.7607830598511023,
+          "ci95": [
+            0.29058091229178906,
+            1.056435429854018
+          ]
+        },
+        "gate_fires": 0.05333333333333334
+      },
+      "backtest_H1": {
+        "always_1term": {
+          "median": 0.008438087322592647,
+          "mean": 0.008620781687171347,
+          "q90": 0.01379078776069185
+        },
+        "always_2term": {
+          "median": 0.006876540138096909,
+          "mean": 0.00787751866384046,
+          "q90": 0.015326723188722116
+        },
+        "gated": {
+          "median": 0.00797021641836588,
+          "mean": 0.008643598291161302,
+          "q90": 0.013890192512976804
+        },
+        "two_term_wins_ties_losses": [
+          57,
+          19,
+          24
+        ],
+        "sign_test_p_wins_vs_losses": 0.0003173169180222807,
+        "median_error_ratio_2term_vs_1term": {
+          "value": -0.18505937717837506,
+          "ci95": [
+            -0.39582306384514176,
+            -0.0035869668906096074
+          ]
+        },
+        "gate_fires": 0.1
+      },
+      "train_gauss_q95_H0": 9.666835761023176
+    },
+    "sigma=0.01": {
+      "n_H0": 150,
+      "n_H1": 100,
+      "repo_stat_H0_median": 1.463672932855431e-18,
+      "repo_stat_H0_q95": 2.9442578159215426e-05,
+      "repo_stat_H1_median": 1.62323024300134e-05,
+      "repo_pvalue_H0_median": 1.0,
+      "repo_pvalue_H1_median": 0.9999918838817214,
+      "repo_nominal_false_positive_rate": 0.0,
+      "repo_nominal_power": 0.0,
+      "repo_corrected_power": 0.36,
+      "repo_auc": 0.7277666666666667,
+      "gauss_stat_H0_median": 0.031575204843572735,
+      "gauss_stat_H0_q95": 4.070281147512639,
+      "gauss_stat_H1_median": 2.091929182772904,
+      "gauss_nominal_false_positive_rate": 0.02666666666666667,
+      "gauss_nominal_power": 0.18,
+      "gauss_corrected_power": 0.32,
+      "gauss_auc": 0.7695333333333333,
+      "gauss_nominal_false_positive_count": [
+        4,
+        150
+      ],
+      "gauss_nominal_false_positive_ci95": [
+        0.010417772291104764,
+        0.06655490610017561
+      ],
+      "gauss_stat_H0_zero_share": 0.4866666666666667,
+      "train7_gauss_nominal_false_positive_count": [
+        4,
+        150
+      ],
+      "train7_gauss_nominal_false_positive_rate": 0.02666666666666667,
+      "train7_gauss_nominal_false_positive_ci95": [
+        0.010417772291104764,
+        0.06655490610017561
+      ],
+      "train7_gauss_stat_H0_zero_share": 0.5066666666666667,
+      "two_term_corner_rate_H0": 0.22666666666666666,
+      "two_term_corner_rate_H1": 0.34,
+      "two_term_boundary_H0": {
+        "coef_at_cap": 0.14,
+        "E_near_zero": 0.14,
+        "shallow_exp_below_0p02": 0.14,
+        "any_boundary": 0.36666666666666664
+      },
+      "two_term_boundary_H1": {
+        "coef_at_cap": 0.16,
+        "E_near_zero": 0.23,
+        "shallow_exp_below_0p02": 0.19,
+        "any_boundary": 0.49
+      },
+      "H1_alpha_hat_median_IQR": [
+        0.6334349201124281,
+        0.45756413977409977,
+        1.4465820975221213
+      ],
+      "H1_beta_hat_median_IQR": [
+        0.20840218445700903,
+        0.024774371023916768,
+        0.3017459885785514
+      ],
+      "H1_ratio_hat_median_IQR": [
+        0.12781771044699708,
+        0.03722728867348517,
+        0.23582495159064115
+      ],
+      "H1_frac_beta_within_0.05_of_truth": 0.11,
+      "backtest_H0": {
+        "always_1term": {
+          "median": 0.014466085194363192,
+          "mean": 0.01563832567121213,
+          "q90": 0.03174285964675338
+        },
+        "always_2term": {
+          "median": 0.017736439668461217,
+          "mean": 0.01964322639266416,
+          "q90": 0.03917800555247893
+        },
+        "gated": {
+          "median": 0.014558719792631972,
+          "mean": 0.016102879973680165,
+          "q90": 0.032513774811131435
+        },
+        "two_term_wins_ties_losses": [
+          16,
+          90,
+          44
+        ],
+        "sign_test_p_wins_vs_losses": 0.00039404324272610154,
+        "median_error_ratio_2term_vs_1term": {
+          "value": 0.22607045583917484,
+          "ci95": [
+            0.02987246127547373,
+            0.42790230869613965
+          ]
+        },
+        "gate_fires": 0.05333333333333334
+      },
+      "backtest_H1": {
+        "always_1term": {
+          "median": 0.012357502164799507,
+          "mean": 0.016362002801057873,
+          "q90": 0.034187184864983455
+        },
+        "always_2term": {
+          "median": 0.01474219086877515,
+          "mean": 0.020204522182987707,
+          "q90": 0.04111086342962708
+        },
+        "gated": {
+          "median": 0.012414070775296247,
+          "mean": 0.017817117864909335,
+          "q90": 0.039109050110120516
+        },
+        "two_term_wins_ties_losses": [
+          27,
+          39,
+          34
+        ],
+        "sign_test_p_wins_vs_losses": 0.4426260049464714,
+        "median_error_ratio_2term_vs_1term": {
+          "value": 0.19297497764301075,
+          "ci95": [
+            -0.07854908816788528,
+            0.6642879450937198
+          ]
+        },
+        "gate_fires": 0.17
+      },
+      "train_gauss_q95_H0": 5.246857659563996
+    }
+  }
+}

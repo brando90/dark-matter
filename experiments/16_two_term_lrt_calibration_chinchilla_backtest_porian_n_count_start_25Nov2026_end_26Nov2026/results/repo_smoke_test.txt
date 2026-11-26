@@ -1,0 +1,47 @@
+================================================================================
+SCALING LAWS FIT - SYNTHETIC DATA TEST
+================================================================================
+
+Ground Truth Parameters:
+  E = 1.8, A = 500.0, α = 0.35, B = 2000.0, β = 0.36
+
+Generated 400 synthetic data points
+N range: [1.00e+07, 1.00e+11]
+D range: [1.00e+09, 1.00e+12]
+Loss range: [1.9450, 4.7368]
+
+--------------------------------------------------------------------------------
+(1) FITTING JOINT LAW: L(N,D) = E + A/N^α + B/D^β
+
+  E     = 1.8067  (true: 1.8)
+  A     = 539.03  (true: 500.0)
+  α     = 0.3553  (true: 0.35)
+  B     = 2196.36  (true: 2000.0)
+  β     = 0.3639  (true: 0.36)
+
+  Compute-optimal split: a = β/(α+β) = 0.5060
+  This means ~50.6% compute on params, ~49.4% on tokens
+
+--------------------------------------------------------------------------------
+(2) FITTING TWO-TERM N-ONLY LAW: L(N) = E + A/N^α + B/N^β with β < α
+
+  Selected 0 points for N-ladder (D around 3.21e+10)
+  (Using all data since not enough points in narrow D-band)
+  E     = 2.0339
+  A     = 2125.88
+  α     = 0.4832
+  B     = 29.69
+  β     = 0.2105
+  Constraint satisfied: β < α? True
+
+--------------------------------------------------------------------------------
+(3) LIKELIHOOD-RATIO TEST: 1-term vs 2-term N-only model
+
+  Test statistic: -0.00
+  Degrees of freedom: 2
+  p-value: 1.000e+00
+  × Second term is NOT statistically significant (p >= 0.05)
+
+================================================================================
+SCALING LAWS FIT TEST COMPLETED SUCCESSFULLY!
+================================================================================

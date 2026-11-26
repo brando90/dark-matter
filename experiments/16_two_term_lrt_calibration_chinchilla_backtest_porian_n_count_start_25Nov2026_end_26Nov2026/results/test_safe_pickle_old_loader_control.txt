@@ -1,0 +1,17 @@
+Negative control: the same probes run against the earlier prefix-based loader (kept outside the repository, not shipped).
+FAIL refuses pandas.core.dtypes.common.__builtins__ (protocol 0)
+FAIL refuses pandas.core.dtypes.common.__builtins__ (protocol 4)
+FAIL refuses pandas.core.frame.com (protocol 0)
+FAIL refuses pandas.core.frame.com (protocol 4)
+FAIL refuses pandas.core.config_init.os (protocol 0)
+FAIL refuses pandas.core.config_init.os (protocol 4)
+FAIL refuses pandas.core.common.builtins (protocol 0)
+FAIL refuses pandas.core.common.builtins (protocol 4)
+FAIL refuses pandas.core.generic.pickle (protocol 0)
+FAIL refuses pandas.core.generic.pickle (protocol 4)
+FAIL refuses pandas.core.common.partial (protocol 0)
+FAIL refuses pandas.core.common.partial (protocol 4)
+FAIL refuses pandas.core.common.pipe (protocol 0)
+FAIL refuses pandas.core.common.pipe (protocol 4)
+AttributeError: module 'pandas.core.generic' has no attribute 'DataFrame'. Did you mean: 'ABCDataFrame'?
+Note: the old loader raised AttributeError on the wrong-module probe pandas.core.generic.DataFrame, so this run stopped there; the FAIL lines above are bypass probes that it did not refuse.

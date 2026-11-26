@@ -1,0 +1,56 @@
+PASS refuses builtins.eval (protocol 0)
+PASS refuses builtins.eval (protocol 4)
+PASS refuses builtins.exec (protocol 0)
+PASS refuses builtins.exec (protocol 4)
+PASS refuses builtins.getattr (protocol 0)
+PASS refuses builtins.getattr (protocol 4)
+PASS refuses builtins.__import__ (protocol 0)
+PASS refuses builtins.__import__ (protocol 4)
+PASS refuses builtins.open (protocol 0)
+PASS refuses builtins.open (protocol 4)
+PASS refuses os.system (protocol 0)
+PASS refuses os.system (protocol 4)
+PASS refuses subprocess.Popen (protocol 0)
+PASS refuses subprocess.Popen (protocol 4)
+PASS refuses posix.system (protocol 0)
+PASS refuses posix.system (protocol 4)
+PASS refuses pandas.io.pickle.read_pickle (protocol 0)
+PASS refuses pandas.io.pickle.read_pickle (protocol 4)
+PASS refuses pandas.core.computation.eval.eval (protocol 0)
+PASS refuses pandas.core.computation.eval.eval (protocol 4)
+PASS refuses pandas.core.dtypes.common.__builtins__ (protocol 0)
+PASS refuses pandas.core.dtypes.common.__builtins__ (protocol 4)
+PASS refuses pandas.core.frame.com (protocol 0)
+PASS refuses pandas.core.frame.com (protocol 4)
+PASS refuses pandas.core.config_init.os (protocol 0)
+PASS refuses pandas.core.config_init.os (protocol 4)
+PASS refuses pandas.core.common.builtins (protocol 0)
+PASS refuses pandas.core.common.builtins (protocol 4)
+PASS refuses pandas.core.generic.pickle (protocol 0)
+PASS refuses pandas.core.generic.pickle (protocol 4)
+PASS refuses pandas.core.common.partial (protocol 0)
+PASS refuses pandas.core.common.partial (protocol 4)
+PASS refuses pandas.core.common.pipe (protocol 0)
+PASS refuses pandas.core.common.pipe (protocol 4)
+PASS refuses pandas.core.config_init.os.system (protocol 0)
+PASS refuses pandas.core.config_init.os.system (protocol 4)
+PASS refuses pandas.core.generic.DataFrame (protocol 0)
+PASS refuses pandas.core.generic.DataFrame (protocol 4)
+PASS allowed pair resolves: builtins.slice
+PASS allowed pair resolves: numpy.dtype
+PASS allowed pair resolves: numpy.ndarray
+PASS allowed pair resolves: numpy.core.multiarray._reconstruct
+PASS allowed pair resolves: numpy.core.numeric._frombuffer
+PASS allowed pair resolves: pandas._libs.internals._unpickle_block
+PASS allowed pair resolves: pandas.core.frame.DataFrame
+PASS allowed pair resolves: pandas.core.indexes.base.Index
+PASS allowed pair resolves: pandas.core.indexes.base._new_Index
+PASS allowed pair resolves: pandas.core.indexes.numeric.Int64Index
+PASS allowed pair resolves: pandas.core.internals.managers.BlockManager
+PASS allowed pair resolves: pandas.core.internals.managers.SingleBlockManager
+PASS allowed pair resolves: pandas.core.series.Series
+PASS real Porian file loads with the pinned SHA-256
+PASS loaded frame equals the frame from the earlier loader
+PASS a wrong SHA-256 is refused
+PASS a freshly pickled frame (other globals) is refused
+PASS
