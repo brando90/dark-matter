@@ -1,4 +1,6 @@
-# Experiments index (dated 11-25-2026)
+# Experiments index (dated 11-26-2026)
+
+As of 11-26-2026.
 
 Convention (fixed in experiment 06): the law is \(L(N) = E + A N^{-\alpha} + B N^{-\beta}\) with **\(\beta < \alpha\)**.
 
@@ -27,5 +29,7 @@ This is the constraint in `fit_two_term_N_only` and `py_src/conjecture_fits.py` 
 | `11_e5_embedding_ladder_runs` | E5: raw results and PREREG analysis of the DM-4 embedding ladder run on Sherlock (phase 1 queued 11-25) | ub9sc |
 | `12_e1_profiled_param_count` | E1: profiled embedding weight c (N_c = N_nonemb + c N_emb) on Porian rw/owt2, Chinchilla, Pythia; one-c and tiny-model-return verdicts (PREREG, verify, results.md) | ub9sc |
 | `13_e3_small_to_large_forecast` | E3: DM-5 rolling-origin forecast with the E1 count correction (strict and shared c) vs 1-term, Drop1/2, LRT 2-term | ub9sc |
+| `14_e2_token_budget_hparams_small_end` | E2: matched token budgets, hyperparameters, and additive Chinchilla fits at Porian's small end; [preregistration](14_e2_token_budget_hparams_small_end/PREREG.md) | ub9sc; initial Claude Code, Opus 5.5; completion Codex CLI, GPT-6 Astra ultra (Vals); Python CPU on skampere1 |
+| `15_e4_porian_lrt_both_counts` | E4: [CONVENTION-DEPENDENT](15_e4_porian_lrt_both_counts/results.md), 26/114 bootstrap detections across 38 Porian conventions and three counts; 1,000 refits/test; verification passes | ub9sc; initial Claude Code, Opus 5.5; completion Codex CLI, GPT-6 Astra ultra (Vals); Python CPU on skampere1 |
 
-`RESULTS.md` summarizes the numbered CPU experiments. They record the protocol in each README; a PREREG file was not committed before the fits.
+`RESULTS.md` summarizes the numbered CPU experiments. The early numbered CPU experiments record their procedure in each README without a preregistration committed before the fits. E2 and E4 have separate preregistrations committed and pushed before their first fits.

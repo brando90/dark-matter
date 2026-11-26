@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/lfs/skampere1/0/brando9/dm_e2e4/dark-matter/experiments/15_e4_porian_lrt_both_counts/verify.py", line 138, in <module>
+    main()
+  File "/lfs/skampere1/0/brando9/dm_e2e4/dark-matter/experiments/15_e4_porian_lrt_both_counts/verify.py", line 115, in main
+    reproduction()  # Must pass before the grid is read.
+    ^^^^^^^^^^^^^^
+  File "/lfs/skampere1/0/brando9/dm_e2e4/dark-matter/experiments/15_e4_porian_lrt_both_counts/verify.py", line 31, in reproduction
+    assert len(d) == len(old) == 14
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+Traceback (most recent call last):
+  File "/lfs/skampere1/0/brando9/dm_e2e4/dark-matter/experiments/15_e4_porian_lrt_both_counts/verify.py", line 138, in <module>
+    main()
+  File "/lfs/skampere1/0/brando9/dm_e2e4/dark-matter/experiments/15_e4_porian_lrt_both_counts/verify.py", line 115, in main
+    reproduction()  # Must pass before the grid is read.
+    ^^^^^^^^^^^^^^
+  File "/lfs/skampere1/0/brando9/dm_e2e4/dark-matter/experiments/15_e4_porian_lrt_both_counts/verify.py", line 42, in reproduction
+    assert len(prev) == 1
+           ^^^^^^^^^^^^^^
+AssertionError

@@ -48,3 +48,9 @@ They are not an optimizer failure. L-BFGS returned `success=True` on every fit c
 ## Cluster
 
 None of these five need a GPU or a larger machine. An embedding-width ladder that would need a cluster already lives in `experiments/dm4_embedding_ladder/` and was not run here.
+
+## Preregistered Porian follow-ups (2026-11-26)
+
+As of 2026-11-26. **Why do the tiniest models live off the scaling curve, and what correction brings them back?** Original preregistrations/fits: ub9sc, Claude Code, Opus 5.5. Completion: ub9sc, Codex CLI, GPT-6 Astra ultra, Vals plan; Python CPU fits on skampere1.
+
+- **[15_e4_porian_lrt_both_counts](15_e4_porian_lrt_both_counts/results.md): CONVENTION-DEPENDENT.** Bootstrap likelihood-ratio detections: non-embedding 1/38, tied 13/38, untied 12/38 (26/114 total); 1,000 completed refits per test. Only four detections also meet the positive small-end reverse-ladder signature. At tuned/short/constant 20 tokens per tied parameter, tied-count RMSE falls from 0.01668 to 0.00489 nats (rw) and 0.02328 to 0.00665 (owt2), with p = 0.000999 each and BIC improvements 29.061/29.798. Verification passes: null 0/40, planted term 40/40. Counts/slices share observations; tuning and schedule are confounded. Full table and caveats are in the linked report.

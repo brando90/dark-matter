@@ -4,6 +4,7 @@ plus the reverse-ladder residual at the smallest sizes.
     python e4.py --workers 8     # writes results/cells/*.json (cache, resumable), results/e4_cells.csv
 """
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -22,23 +23,54 @@ B_BOOT = 1000
 LEVEL = 0.05
 SEED = 20261125
 OUT = os.path.join(HERE, "results")
+BOOT_CHUNK = 100
+CACHE_VERSION = 2
 
 
-def lrt_full(n, y, rng, B=B_BOOT):
+def atomic_json(path, value):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path + ".tmp", "w") as handle:
+        json.dump(value, handle)
+    os.replace(path + ".tmp", path)
+
+
+def cache_key(n, y, B, seed_tag):
+    """Bind a cached bootstrap to its inputs, seed, size and actual fitter code."""
+    h = hashlib.sha256()
+    h.update(np.asarray(n, dtype="<f8").tobytes())
+    h.update(np.asarray(y, dtype="<f8").tobytes())
+    h.update(json.dumps([CACHE_VERSION, B, SEED, seed_tag]).encode())
+    for module in (L.dm1b, L.e1lib):
+        with open(module.__file__, "rb") as handle:
+            h.update(handle.read())
+    return h.hexdigest()
+
+
+def lrt_full(n, y, rng, B=B_BOOT, checkpoint=None, key=None):
     """DM-1b's rule with all B refits run (no early stop): returns f1, f2 (DM-1b names), T, p, k, nbad."""
     f1, f2 = L.e1lib.fit2(n, y)
     npts = len(n)
     T = float(L.dm1b.lrt_stat(npts, f1["rss"], f2["rss"]))
-    if not T > 0:
-        return f1, f2, T, 1.0, B, 0
     sig = np.sqrt(f1["rss"] / (npts - 3))
     mu = f1["E"] + f1["a"] * n ** -f1["alpha"]
     Ys = mu[None, :] + sig * rng.normal(0, 1, (B, npts))
-    g1, g2 = L.dm1b.fit_chunked(n, Ys)
-    Ts = L.dm1b.lrt_stat(npts, g1["rss"], g2["rss"])
-    bad = ~np.isfinite(Ts)
-    k = int(((Ts >= T - 1e-9 * max(T, 1.0)) | bad).sum())
-    return f1, f2, T, (1 + k) / (B + 1), k, int(bad.sum())
+    done, k, nbad = 0, 0, 0
+    if checkpoint and os.path.exists(checkpoint):
+        saved = json.load(open(checkpoint))
+        if saved.get("cache_key") == key and saved.get("B") == B:
+            done, k, nbad = (int(saved[name]) for name in ("B_done", "k_exceed", "boot_nonfinite"))
+            if not (0 <= nbad <= k <= done <= B):
+                raise ValueError("invalid bootstrap checkpoint")
+    for lo in range(done, B, BOOT_CHUNK):
+        hi = min(lo + BOOT_CHUNK, B)
+        g1, g2 = L.dm1b.fit_chunked(n, Ys[lo:hi])
+        Ts = L.dm1b.lrt_stat(npts, g1["rss"], g2["rss"])
+        bad = ~np.isfinite(Ts)
+        k += int(((Ts >= T - 1e-9 * max(T, 1.0)) | bad).sum())
+        nbad += int(bad.sum())
+        if checkpoint:
+            atomic_json(checkpoint, dict(cache_key=key, B=B, B_done=hi, k_exceed=k, boot_nonfinite=nbad))
+    return f1, f2, T, (1 + k) / (B + 1), k, nbad
 
 
 def bic(rss, npts, k):
@@ -52,8 +84,7 @@ def cell_id(ds, rc, sl, cname):
 def run_cell(job):
     ds, rc, sl, cname, B = job
     path = os.path.join(OUT, "cells", cell_id(ds, rc, sl, cname) + ".json")
-    if os.path.exists(path):
-        return json.load(open(path))
+    saved = json.load(open(path)) if os.path.exists(path) else None
     t0 = time.time()
     d = L.ladder(ds, rc, sl)
     N = L.count(L.COUNTS[cname], d.N_nonemb.values, d.width.values)
@@ -62,19 +93,41 @@ def run_cell(job):
     y = d.y.values
     n = N / L.N_REF
     npts = len(y)
+    key = cache_key(n, y, B, cell_id(ds, rc, sl, cname))
+    if saved and saved.get("cache_key") == key and saved.get("B_done") == B:
+        return saved
     row = dict(dataset=ds, recipe=rc, slice=str(sl), count=cname, npts=npts, N_min=float(N.min()), N_max=float(N.max()),
                widths=",".join(str(int(w)) for w in d.width), testable=int(npts > 6))
     if npts > 6:
         rng = np.random.default_rng([SEED, zlib.crc32(cell_id(ds, rc, sl, cname).encode())])
-        f1, f2, T, p, k, nbad = lrt_full(n, y, rng, B)
+        # The original implementation did run all B refits when T > 0. Reuse those
+        # completed results only after checking observed fits, seed and B. T = 0
+        # records formerly claimed B without refits; complete all B for those now.
+        f1_check, f2_check = L.e1lib.fit2(n, y)
+        T_check = float(L.dm1b.lrt_stat(npts, f1_check["rss"], f2_check["rss"]))
+        legacy_ok = (saved and "cache_key" not in saved and saved.get("B") == B == B_BOOT
+                     and saved.get("T", 0) > 0 and saved.get("npts") == npts
+                     and np.isclose(saved["rss1"], f1_check["rss"], rtol=1e-10, atol=1e-14)
+                     and np.isclose(saved["rss2"], f2_check["rss"], rtol=1e-10, atol=1e-14)
+                     and saved["p_lrt"] == (1 + saved["k_exceed"]) / (B + 1))
+        if legacy_ok:
+            f1, f2, T = f1_check, f2_check, T_check
+            p, k, nbad = (saved[name] for name in ("p_lrt", "k_exceed", "boot_nonfinite"))
+            provenance = "completed-original-positive-T-bootstrap; observed-fits-rechecked"
+        else:
+            f1, f2, T, p, k, nbad = lrt_full(n, y, rng, B, path + ".progress.json", key)
+            provenance = "resumed-all-B-refits-including-zero-T"
         nm = L.e1lib.two_term_named(f2)
         share = (nm["A_fast"] * n.min() ** -nm["alpha_fast"]) / max(nm["B_slow"] * n.min() ** -nm["beta_slow"], 1e-300)
         row.update(T=T, p_lrt=p, k_exceed=k, B=B, boot_nonfinite=nbad, detect=int(p <= LEVEL),
+                   B_done=B, cache_key=key, bootstrap_provenance=provenance,
                    E1=f1["E"], A1=f1["a"], alpha1=f1["alpha"], rss1=f1["rss"], sd1=float(np.sqrt(f1["rss"] / (npts - 3))),
                    E2=nm["E"], A_fast=nm["A_fast"], alpha_fast=nm["alpha_fast"], B_slow=nm["B_slow"],
                    beta_slow=nm["beta_slow"], rss2=nm["rss"], sd2=float(np.sqrt(nm["rss"] / (npts - 5))),
                    dbic=float(bic(f1["rss"], npts, 3) - bic(nm["rss"], npts, 5)),
                    fast_share_at_Nmin=float(share) if nm["A_fast"] > 0 else 0.0)
+        row.update(rmse1=float(np.sqrt(f1["rss"] / npts)), rmse2=float(np.sqrt(nm["rss"] / npts)),
+                   bic1=float(bic(f1["rss"], npts, 3)), bic2=float(bic(nm["rss"], npts, 5)))
     else:
         row.update(detect=0)
     # reverse ladder: reference = tied N >= 1e8 (same models under every count)
@@ -101,8 +154,7 @@ def run_cell(job):
                    rev_frac_pos=frac, rev_signature=sig, rev_E=f["E"], rev_A=f["a"], rev_alpha=f["p"])
     row["seconds"] = time.time() - t0
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    json.dump(row, open(path + ".tmp", "w"))
-    os.replace(path + ".tmp", path)
+    atomic_json(path, row)
     return row
 
 

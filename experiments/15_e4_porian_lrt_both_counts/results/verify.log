@@ -1,0 +1,12 @@
+PASS reproduction: 6 TS 20N count/dataset tests; 14 losses equal DM-2; T/detection equal E1; tied 5M residuals equal DM-2 within 0.005 nats
+PASS integrity: exact 114-row grid; all 114,000 refits complete; cache input/config hashes, losses, p-values, RMSE, BIC, nested RSS and exponent ordering checked
+Controls complete: 10/80
+Controls complete: 20/80
+Controls complete: 30/80
+Controls complete: 40/80
+Controls complete: 50/80
+Controls complete: 60/80
+Controls complete: 70/80
+Controls complete: 80/80
+Null control: 0/40 detections (required <=6/40); positive control: 40/40 detections (required >=32/40)
+PASS E4 verification
