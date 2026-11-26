@@ -31,6 +31,7 @@ N_PARAMS = {
     "compute_two": 5,
     "joint": 5,
     "joint_extra_n": 7,
+    "joint_extra_d": 7,
 }
 
 
@@ -100,6 +101,8 @@ def predict(kind: str, params: dict, N=None, D=None, C=None) -> np.ndarray:
         return _predict_joint(params, N, D, extra=False)
     if kind == "joint_extra_n":
         return _predict_joint(params, N, D, extra=True)
+    if kind == "joint_extra_d":
+        return _predict_joint_extra_d(params, N, D)
     raise KeyError(kind)
 
 
@@ -140,6 +143,20 @@ def _predict_joint(params: dict, N, D, extra: bool) -> np.ndarray:
         t_b = np.log(params["B"]) - params["beta"] * logn
         return _predict_sum(np.vstack([t_a, t_b, t_d, e]))
     return _predict_sum(np.vstack([t_a, t_d, e]))
+
+
+def _predict_joint_extra_d(params: dict, N, D) -> np.ndarray:
+    """L = E + A N^{-alpha} + G D^{-gamma} + H D^{-delta}, delta < gamma.
+
+    gamma is the fast token exponent. delta is the slow one.
+    """
+    n, d = _as64(N, D)
+    logn, logd = np.log(n), np.log(d)
+    e = np.full_like(logn, np.log(params["E"]))
+    t_a = np.log(params["A"]) - params["alpha"] * logn
+    t_fast = np.log(params["G"]) - params["gamma"] * logd
+    t_slow = np.log(params["H"]) - params["delta"] * logd
+    return _predict_sum(np.vstack([t_a, t_fast, t_slow, e]))
 
 
 def _pack_power(kind: str, theta: np.ndarray, logx_train: np.ndarray):
@@ -420,6 +437,74 @@ def fit_joint(n, d, y, extra: bool = False, delta: float = 1e-3, n_starts: int =
         finalize=lambda th: _pack_joint(th, extra),
         diagnose=diagnose,
         record_starts=record_starts,
+    )
+
+
+def _pack_joint_extra_d(theta: np.ndarray) -> dict:
+    e = float(np.exp(theta[0]))
+    a = float(np.exp(theta[1]))
+    alpha = _softplus(theta[2]) + 1e-8
+    gamma = _softplus(theta[4]) + 1e-8
+    frac = float(expit(theta[6]))
+    delta = max(1e-8, gamma * frac)
+    return {
+        "E": e,
+        "A": a,
+        "alpha": alpha,
+        "G": float(np.exp(theta[3])),
+        "gamma": gamma,
+        "H": float(np.exp(theta[5])),
+        "delta": delta,
+    }
+
+
+def _objective_joint_extra_d(theta, logn, logd, logy, delta_huber) -> float:
+    try:
+        p = _pack_joint_extra_d(theta)
+        e = np.full_like(logn, np.log(p["E"]))
+        t_a = np.log(p["A"]) - p["alpha"] * logn
+        t_fast = np.log(p["G"]) - p["gamma"] * logd
+        t_slow = np.log(p["H"]) - p["delta"] * logd
+        return _huber_from_log_terms(np.vstack([t_a, t_fast, t_slow, e]), logy, delta_huber)
+    except Exception:
+        return PENALTY
+
+
+def fit_joint_extra_d(n, d, y, delta: float = 1e-3, n_starts: int = 12, seed: int = 0) -> FitResult:
+    """Second token power: gamma is fast (larger), delta = gamma * sigmoid is slow."""
+    n, d, y = _as64(n, d, y)
+    if np.any(y <= 0) or np.any(n <= 0) or np.any(d <= 0):
+        raise ValueError("fit_joint_extra_d expects positive N, D, loss")
+    logn, logd, logy = np.log(n), np.log(d), np.log(y)
+    # Reuse the 7-parameter starts built for the extra-N model. The layout matches
+    # _pack_joint_extra_d: the fraction multiplies the fast token exponent.
+    starts = _starts_joint(n, d, y, extra=True, n_starts=n_starts, seed=seed)
+
+    def objective(theta):
+        return _objective_joint_extra_d(theta, logn, logd, logy, delta)
+
+    def diagnose(p):
+        fast = p["G"] * d ** (-p["gamma"])
+        slow = p["H"] * d ** (-p["delta"])
+        frac = slow / np.maximum(fast + slow, 1e-30)
+        info = {
+            "delta_over_gamma": p["delta"] / p["gamma"],
+            "median_slow_fraction": float(np.median(frac)),
+        }
+        info["collapsed_to_single"] = bool(
+            info["median_slow_fraction"] < 0.02
+            or info["median_slow_fraction"] > 0.98
+            or info["delta_over_gamma"] > 0.98
+        )
+        return info
+
+    return _minimize_starts(
+        "joint_extra_d",
+        objective,
+        starts,
+        n=len(y),
+        finalize=_pack_joint_extra_d,
+        diagnose=diagnose,
     )
 
 
