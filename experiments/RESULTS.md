@@ -18,6 +18,7 @@ All five runs finished on CPU (Python 3.12.3, numpy / scipy / pandas / matplotli
 4. **Identifiability.** All 24 joint starts agree (parameter exponent 0.351–0.353). Bootstrap resampling does not: \(\log A\) correlates with \(\alpha\) at 0.999, and \(G\)'s 10th–90th percentile runs from \(3\times 10^{3}\) to \(4\times 10^{4}\). On the matched ladder the slow term's share of the loss at the median \(N\) runs from 0.14 to 0.89.
 5. **Synthetic recovery.** With 36 sizes and 2% log-noise, a two-term truth does not produce a reliable held-out win (mean RMSE difference versus the single term is \(+0.005\), win rate 10/20). Both exponents are recovered noiselessly by the self-check, and a single exponent is recovered at \(\sigma=0.02\) (median \(\alpha = 0.50\)). Two exponents of the same \(N\) are not. A joint \((N, D)\) grid does recover \(\alpha\) (median 0.356 vs 0.35).
 6. **Naming.** The experiments index now uses the code constraint \(\beta < \alpha\), with \(\alpha\) fast and \(\beta\) slow. The root README's \(\beta > \alpha\) is the same law with the letters swapped, and that file is left as written.
+7. **Power.** For the separated truth from experiment 05, no cell with up to 64 sizes, a \(10^{4}\) range in \(N\), and log-noise down to 0.5% meets the pre-set rule (80% win rate and a 0.01 nat median held-out gap). The best cell wins 16/16 but the median gap is 0.0066 nats. With no noise the same 64-size, \(10^{4}\) ladder has a 0.0165 nat gap, so the signal is real and smaller than 0.5% noise.
 
 ## What the negative results are not
 
