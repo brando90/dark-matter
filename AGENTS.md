@@ -2,6 +2,12 @@
 
 Shared engineering and research guidelines for AI coding agents working in `dark-matter`.
 
+## 0. Git and experiment workflow
+
+- **Always push directly to `main`.** Do not create feature branches and do not open pull requests unless the user explicitly asks for a branch or a PR.
+- **Always put experiments in numbered folders under `experiments/`.** Follow the existing layout (`experiments/01_.../`, `experiments/06_naming_convention/`, and the rest of the index in `experiments/README.md`): a README with hypothesis, method, and result, a runnable script, and committed outputs. Update `experiments/RESULTS.md` with an honest one-line result when the experiment finishes, including negative results.
+- `origin/archive/stair-lab-dark-matter2-history` is a backup of the old `stair-lab/dark-matter2` history. Its tip is already an ancestor of `main`. Do not merge it in a way that replaces `main`'s README or `experiments/`.
+
 ## 1. Project Overview
 
 The **Dark Matter** project investigates higher-order / "missing" terms in neural scaling laws beyond single-slope power laws, aiming to extrapolate large-model performance more accurately from smaller runs.
