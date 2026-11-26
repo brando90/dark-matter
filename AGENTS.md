@@ -10,7 +10,7 @@ The **Dark Matter** project investigates higher-order / "missing" terms in neura
   `L(N, D) = E + A / N^α + B / D^β`
   Fitted with the Huber-in-log-space `logsumexp` objective (`fit_joint_powerlaw` in `py_src/scaling_laws_fit.py`, `delta=1e-3`, `L-BFGS-B`), assuming compute `C ≈ 6 * N * D` and optimal allocation exponent `a = β / (α + β)`.
 - **Two-term N-only conjecture**:
-  `L(N) = E + A / N^α + B / N^β` with `β < α` (`fit_two_term_N_only`), tested against a 1-term baseline via the Huber likelihood-ratio test (`lr_test`).
+  `L(N) = E + A / N^α + B / N^β` with `β < α` in the code's naming (`fit_two_term_N_only`; the same law as the README's β > α with the two names swapped: always say which term is the fast one, the one that matters at small N), tested against a 1-term baseline via the Huber likelihood-ratio test (`lr_test`).
 - **Non-negotiable rule**: **Never** replace the additive Chinchilla form `E + A/N^α + B/D^β` with a multiplicative `A * N^(-α) * D^(-β)` form.
 
 ## 2. Environment & Common Commands
