@@ -15,6 +15,7 @@ L(N, D) = E + \frac{A}{N^{\alpha}} + \frac{G}{D^{\gamma}}
 $$
 
 and relative to one-variable baselines \(L(N)\), \(L(D)\), and \(L(C) = E + A C^{-\alpha}\) with \(C = 6ND\). A two-term law in compute, \(L(C) = E + A C^{-\alpha} + B C^{-\beta}\), is the compute analogue of the conjecture. All of these forms are additive. None is the multiplicative form \(A N^{-\alpha} D^{-\beta}\).
+On the extra \(N\) term, \(\alpha\) is the fast exponent and \(\beta < \alpha\) is the slow one. The experiments index writes that pair with the names swapped.
 
 In the CSV, Hoffmann's data coefficient and exponent are `param_G` and `param_gamma`.
 

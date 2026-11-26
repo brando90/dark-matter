@@ -12,10 +12,9 @@ Convention (fixed 11-25-2026): the law is L(N) = E + A N^-alpha + B N^-beta wher
 | `dm4_embedding_ladder` | DM-4: own ladder that varies embedding size at fixed body size (design, trainer, G1 gate, phase 1 rows) | ub9sc |
 | `dm5_small_to_large` | DM-5: rolling-origin small-to-large extrapolation | ub9sc |
 | `01_backtest_single_vs_two_term` | hold-out back-test on Chinchilla, GPT-3, Pythia LAMBADA | Grok |
-| `02_e1_profiled_param_count` | E1: N = N_nonemb + c N_emb on every ladder where it is defined | ub9sc |
-| `03_e2_token_budget_hparams_small_end` | E2: token budget and hyperparameters at the small end of Porian | ub9sc |
-| `04_e3_small_to_large_forecast` | E3: all sizes vs drop-smallest vs two-term vs E1 correction | ub9sc |
-| `05_e4_porian_lrt_both_counts` | E4: Porian re-test with the DM-1b bootstrap LRT and every count convention | ub9sc |
-| `06_e5_embedding_ladder_runs` | E5: running and summarizing the DM-4 ladder (code stays in `dm4_embedding_ladder`) | ub9sc |
+| `02_compute_and_joint_extrapolation` | size and compute holdouts for the joint law vs a second N term | Grok |
+| `03_residual_structure` | in-sample residuals of the single-term and joint fits | Grok |
+| `04_fit_stability` | multi-start, bootstrap, Huber-delta sweep on Chinchilla | Grok |
+| `05_synthetic_recovery` | recover a known two-term law, plus a false-positive check | Grok |
 
-Each numbered folder has PREREG.md (committed before the first fit), the code, a verify script, results.md naming harness and model.
+`RESULTS.md` summarizes 01–05. Those five record the protocol in each README; a PREREG file was not committed before the fits. In `conjecture_fits.py`, alpha is the fast exponent and beta < alpha is the slow one (names swapped relative to the sentence above).

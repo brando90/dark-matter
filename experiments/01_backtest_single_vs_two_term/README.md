@@ -15,6 +15,7 @@ has lower extrapolation error than
 - a broken power law \(L(N) = E + A N^{-\alpha} / \bigl(1 + (N/N_b)^{\delta}\bigr)\),
 
 when every model is fit only on smaller \(N\) and scored on the largest held-out sizes.
+In this fit, \(\alpha\) is the fast exponent (the one that matters at small \(N\)) and \(\beta\) is the slow exponent. The experiments index writes the same law with those names swapped.
 
 ## Method
 
