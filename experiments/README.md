@@ -21,5 +21,6 @@ This is the constraint in `fit_two_term_N_only` and `py_src/conjecture_fits.py` 
 | `05_synthetic_recovery` | recover a known two-term law, plus a false-positive check | Grok |
 | `06_naming_convention` | index uses \(\beta < \alpha\), \(\alpha\) fast; maps the root README's swapped letters | Grok |
 | `07_power_analysis` | sizes, \(N\) range, and noise needed before held-out RMSE sees the slow term | Grok |
+| `11_e5_embedding_ladder_runs` | E5: raw results and PREREG analysis of the DM-4 embedding ladder run on Sherlock (phase 1 queued 11-25) | ub9sc |
 
 `RESULTS.md` summarizes the numbered CPU experiments. They record the protocol in each README; a PREREG file was not committed before the fits.
