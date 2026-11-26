@@ -1,0 +1,7 @@
+{
+  "software_pass": true,
+  "scientific_gate_pass": null,
+  "original_scientific_gate_pass": false,
+  "date": "2026-11-26",
+  "meaning": "Software-only checks do not validate a scientific verdict."
+}

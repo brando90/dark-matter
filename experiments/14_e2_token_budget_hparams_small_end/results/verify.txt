@@ -1,5 +1,10 @@
-[PASS] 1 reproduction: rw X_5M(TC20) +0.3473 vs DM-2 +0.347; rw TC20 vs curves.csv max |dy| 0.0e+00 (14 sizes); rw BC20 vs curves.csv max |dy| 0.0e+00 (14 sizes); owt2 X_5M(TC20) +0.3707 vs DM-2 +0.371; owt2 TC20 vs curves.csv max |dy| 0.0e+00 (14 sizes); owt2 BC20 vs curves.csv max |dy| 0.0e+00 (14 sizes)
-[FAIL] 2 positive control (data term only): J EXPLAINS at 5M in 0.20, M_5M RETURNS in 0.85 of 20 (median X +0.114, X^J +0.005)
-[FAIL] 3 null control (planted fast N term): J not EXPLAINS in 0.85, M_5M STAYS OFF in 0.50 of 20 (median X +0.441, X^J +0.304)
-[PASS] 4 arithmetic: max |error| 0.0e+00 over 19 identities
-SOME FAIL
+[PASS] software: reproduction: rw X_5M(TC20)=+0.347285, reference=+0.347; rw TC20 |dy|max=0.0e+00, 14 sizes; rw BC20 |dy|max=0.0e+00, 14 sizes; owt2 X_5M(TC20)=+0.370665, reference=+0.371; owt2 TC20 |dy|max=0.0e+00, 14 sizes; owt2 BC20 |dy|max=0.0e+00, 14 sizes
+[PASS] software: factor arithmetic: 114 identities; max error=0
+[PASS] software: persisted draws: 46 completed caches; N/sweep B=2000, joint B=500
+[PASS] software: unavailable sweep correction: rw 9M corrected M unavailable, never G=0
+[PASS] software: observation pairing: 5 TC20 reference observations reuse their joint-design innovations exactly
+[PASS] software: noiseless joint-law recovery: no-fast XJ5=0.000000617; planted J fraction=0.534191; does not replace statistical gates
+[FAIL] scientific gate: positive control: J EXPLAINS 3/20; M RETURNS 0/20; both require >=16/20
+[FAIL] scientific gate: planted-fast-term control: J not EXPLAINS 17/20; M STAYS OFF 9/20; both require >=16/20
+SOFTWARE PASS
+SCIENTIFIC GATE FAILED; verdicts conditional/descriptive

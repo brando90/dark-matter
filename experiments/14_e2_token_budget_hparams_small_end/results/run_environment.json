@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-26",
+  "initial_harness": "Claude Code",
+  "initial_model": "Opus 5.5 (claude-opus-5-5), per preregistration",
+  "resume_harness": "Codex CLI via vals-codex",
+  "resume_model": "GPT-6 Astra",
+  "resume_effort": "ultra",
+  "host": "skampere1.stanford.edu",
+  "python": "3.11.12 (main, Apr  9 2025, 04:04:00) [Clang 20.1.0 ]",
+  "dependencies": {
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "pandas": "3.1.1",
+    "matplotlib": "3.11.2"
+  },
+  "compute": "CPU only; nice >=10; BLAS/OMP threads 1; at most 3 E4 workers and 3 E2 processes concurrently",
+  "venv": "../venv (resumed existing environment; ~/uv_envs/dark-matter2 absent)",
+  "data_loaded_rows": 975,
+  "data_sizes": 16,
+  "sources_sha256": {
+    "data/data_resolving_discrepancies/experiment_results.pickle.xz": "eae02848c22e72f90d1a08fb4d3f9782941563fd70636a33ce30692ec709bc34",
+    "experiments/dm1_power_analysis/dm1b.py": "cac8637ad1e55933652fa64cbf3bdd4db26c3ec4daca3c0c2ac74895dbf80488",
+    "experiments/dm5_small_to_large/dm1b.py": "cac8637ad1e55933652fa64cbf3bdd4db26c3ec4daca3c0c2ac74895dbf80488",
+    "experiments/12_e1_profiled_param_count/e1lib.py": "4e2357a112f4c22167a0ea11e3db4b43c2d3d42df6fd67390cb5b8e8653163cb",
+    "experiments/dm2_real_ladders/data.py": "305599425fc794abd29f6262db237df687409921feb2700f7603ee32abc6db21",
+    "experiments/dm2_real_ladders/fitlib.py": "74242bc3c92bcb71cc9e1dd6a9bf2b71d4b1092c81b8d1eee5fab06a76b89a8b"
+  }
+}

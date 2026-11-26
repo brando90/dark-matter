@@ -1,6 +1,6 @@
 """E2 (PREREG.md, 11-25-2026): how much of Porian's small-end excess loss is token budget, and how much hyperparameters?
 
-    python e2.py                 # writes results/e2_*.csv and results/e2_boot.npz (bootstrap draws, cached)
+    python e2.py                 # writes results/e2_*.csv and results/bootstrap/ (all draws, resumable)
 
 Every number in nats. Excess X_s = y_s - 1-term law fitted on the reference sizes (tied N >= 1e8) of the same
 condition. Factor contributions and decision rules: PREREG.md.
@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 
 import e2lib as L
+import cache_io as CACHE
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "results")
@@ -29,7 +30,7 @@ SWEEP_LARGE = [640.0, 832.0]
 
 # ---------------- pieces that verify.py also drives ----------------
 
-def excess_boot(lad, cname, sd, rng, B, eps_small=None):
+def excess_boot(lad, cname, sd, rng, B, eps_small=None, eps_ref=None):
     """Observed X at every non-reference size and B bootstrap draws. lad: width, N_nonemb, N_tied, y.
     sd: {width: seed sd}. eps_small: optional {width: (B,) standard normals} to share small-size draws.
     Returns dict(obs={width: X}, boot={width: (B,)}, fit=1-term dict, sigma_ref, nref) or None (< 4 ref sizes)."""
@@ -42,7 +43,8 @@ def excess_boot(lad, cname, sd, rng, B, eps_small=None):
     f = L.fit1(n[ref], y[ref])
     nr = int(ref.sum())
     sig = max(np.sqrt(f["rss"] / (nr - 3)), SIG_FLOOR)
-    Ystar = L.pred1(f, n[ref])[None, :] + sig * rng.normal(0, 1, (B, nr))
+    ref_noise = rng.normal(0, 1, (B, nr)) if eps_ref is None else eps_ref
+    Ystar = L.pred1(f, n[ref])[None, :] + sig * ref_noise
     fb = L.fit1_many(n[ref], Ystar)
     obs, boot = {}, {}
     for j in np.flatnonzero(~ref):
@@ -54,7 +56,7 @@ def excess_boot(lad, cname, sd, rng, B, eps_small=None):
         pb = fb["E"] + fb["a"] * n[j] ** -fb["p"]
         obs[w] = float(y[j] - L.pred1(f, n[j]))
         boot[w] = ys - pb
-    return dict(obs=obs, boot=boot, fit=f, sigma_ref=sig, nref=nr)
+    return dict(obs=obs, boot=boot, fit=f, sigma_ref=sig, nref=nr, B=B, fitted_draws=fb)
 
 
 def joint_points_tc(ds):
@@ -73,7 +75,7 @@ def joint_points_bc(ds):
                              y=b.final_loss.values, D=b.final_tokens.values, k=b.tpp.values))
 
 
-def joint_boot(J, small, cname, sd, rng, B, eps_small):
+def joint_boot(J, small, cname, sd, rng, B, eps_small, eps_ref=None, partial=None):
     """Additive Chinchilla joint law on points J; predict each small size (rows of `small`, y at D = 20 N_tied).
     Returns dict(obs, boot (first B draws), fit, sd_fit, npts)."""
     N = L.count(L.COUNTS[cname], J.N_nonemb.values, J.width.values) / L.N_REF
@@ -88,13 +90,23 @@ def joint_boot(J, small, cname, sd, rng, B, eps_small):
     ds_ = 20 * small.N_tied.values / 1e9
     obs = {float(w): float(yv - L.F.predJ(f, np.array([a]), np.array([b]))[0])
            for w, yv, a, b in zip(small.width, small.y, ns, ds_)}
-    preds = np.empty((B, len(small)))
-    for i in range(B):
-        g = L.F.fitJ1(N, d, mu + sig * rng.normal(0, 1, npts), x0=[f["alpha"], f["gamma"]])
+    preds = np.full((B, len(small)), np.nan)
+    ref_noise = rng.normal(0, 1, (B, npts)) if eps_ref is None else eps_ref
+    key = CACHE.digest(dict(N=N, d=d, y=y, ns=ns, ds=ds_, B=B, eps_ref=ref_noise))
+    start = 0
+    if partial is not None and os.path.exists(partial):
+        old = CACHE.read(partial)
+        if old['key'] == key:
+            preds, start = old['preds'], old['completed']
+    for i in range(start, B):
+        g = L.F.fitJ1(N, d, mu + sig * ref_noise[i], x0=[f["alpha"], f["gamma"]])
         preds[i] = L.F.predJ(g, ns, ds_)
+        if partial is not None and ((i + 1) % 25 == 0 or i + 1 == B):
+            CACHE.save(partial, dict(key=key, version=CACHE.VERSION, preds=preds, completed=i+1, target_B=B))
+            print(f'{os.path.basename(partial)}: {i+1}/{B}', flush=True)
     boot = {float(w): small.y.values[j] + sd[float(w)] * eps_small[float(w)][:B] - preds[:, j]
             for j, w in enumerate(small.width)}
-    return dict(obs=obs, boot=boot, fit=f, sd_fit=sdf, npts=npts)
+    return dict(obs=obs, boot=boot, fit=f, sd_fit=sdf, npts=npts, B=B, predictions=preds)
 
 
 def verdict(C, lo, hi, base, sd2):
@@ -123,7 +135,7 @@ def ret_verdict(M, lo, hi, sd2):
 
 # ---------------- sweep (rw) ----------------
 
-def sweep_table(rng, B, sd):
+def sweep_table(rng, B, sd, bank=None):
     """Per sweep size: y_best3, y_min, base-like, tuned recipe at the sweep's D/N; gaps with B draws."""
     raw = pd.read_pickle(L.D.PORIAN)
     sw = raw[(raw.hparams == "sweep") & (raw.dataset == "rw")].copy()
@@ -144,7 +156,7 @@ def sweep_table(rng, B, sd):
         Ystar = g.y.values[None, :] + s * rng.normal(0, 1, (B, len(g)))
         best3_b = np.sort(Ystar, 1)[:, :3].mean(1)
         bl_b = Ystar[:, list(g.index).index(blr.name)]
-        yt_b = yt + s * rng.normal(0, 1, B)
+        yt_b = yt + s * (rng.normal(0, 1, B) if bank is None else bank.get("TS", w, tpp*r0.N_total)[:B])
         rows.append(dict(width=w, N_tied=r0.N_total, configs=len(g), tpp=tpp, y_min=ys[0], y_best3=ys[:3].mean(),
                          base_like_bs=blr.bs, y_base_like=blr.y, y_tuned=yt, gap_base=blr.y - ys[:3].mean(),
                          gap_tuned=yt - ys[:3].mean(), gap_tuned_vs_min=yt - ys[0], gap_base_vs_min=blr.y - ys[0],
@@ -174,13 +186,19 @@ def analyse(cname, verdicts=True):
     for di, ds in enumerate(("rw", "owt2")):
         sdd = {w: s for (d_, w), s in sd.items() if d_ == ds}
         rng = np.random.default_rng([SEED, di, len(cname)])
+        bank = CACHE.NoiseBank(f"{SEED}|{ds}|real", B_N)
+        cache_dir = os.path.join(OUT, "bootstrap", cname, ds)
         lads = {c: L.ladder(ds, *v) for c, v in COND.items()}
-        eps_tc = {w: rng.normal(0, 1, B_N) for w in L.SMALL}
-        eps_bc = {w: rng.normal(0, 1, B_N) for w in L.SMALL}
+        eps_tc = {float(r.width): bank.get("TS", r.width, r.D) for r in lads["TC20"].itertuples() if r.width in L.SMALL}
+        eps_bc = {float(r.width): bank.get("BC", r.width, r.D) for r in lads["BC20"].itertuples() if r.width in L.SMALL}
         X = {}
         for c, lad in lads.items():
-            share = eps_tc if c == "TC20" else eps_bc if c == "BC20" else None
-            X[c] = excess_boot(lad, cname, sdd, rng, B_N, share)
+            recipe = COND[c][0]
+            share = {float(r.width): bank.get(recipe, r.width, r.D) for r in lad.itertuples() if r.width in L.SMALL}
+            ref_noise = bank.matrix(recipe, lad[lad.N_tied >= L.REF_MIN])
+            payload = dict(ladder=lad.to_numpy(), count=cname, sd=sdd, B=B_N, small=share, ref=ref_noise)
+            X[c] = CACHE.cached(os.path.join(cache_dir, c + '.npz'), payload, rng,
+                            lambda: excess_boot(lad, cname, sdd, rng, B_N, share, ref_noise))
             if X[c] is None:
                 continue
             for w in L.SMALL:
@@ -192,7 +210,12 @@ def analyse(cname, verdicts=True):
         XJ = {}
         for tag, J, src, eps in (("TC", joint_points_tc(ds), "TC20", eps_tc), ("BC", joint_points_bc(ds), "BC20", eps_bc)):
             small = lads[src][lads[src].width.isin(list(L.SMALL))]
-            XJ[tag] = joint_boot(J, small, cname, sdd, rng, B_J, eps)
+            ref_noise = bank.matrix('TS' if tag == 'TC' else 'BC', J, B_J)
+            payload = dict(J=J.to_numpy(), small=small.to_numpy(), count=cname, sd=sdd, B=B_J,
+                           small_noise=eps, ref_noise=ref_noise)
+            XJ[tag] = CACHE.cached(os.path.join(cache_dir, 'joint_' + tag + '.npz'), payload, rng,
+                lambda: joint_boot(J, small, cname, sdd, rng, B_J, eps, ref_noise,
+                                   os.path.join(cache_dir, 'partial_joint_' + tag + '.npz')))
             f = XJ[tag]["fit"]
             # secondary: joint law on all sizes (same D/N window), residual at the small sizes at 20N
             Jall = joint_points_tc_all(ds) if tag == "TC" else joint_points_bc_all(ds)
@@ -207,7 +230,11 @@ def analyse(cname, verdicts=True):
                                **{f"all_resid_{L.SMALL[w]}": float(r) for w, r in zip(small.width, ra)},
                                **{f"XJ_{L.SMALL[w]}": XJ[tag]["obs"].get(w, np.nan) for w in L.SMALL}))
         if ds == "rw":
-            ST, Hb, Gb = sweep_table(rng, B_N, sd)
+            def compute_sweep():
+                table, hb, gb = sweep_table(rng, B_N, sd, bank)
+                return dict(table=table.to_dict('list'), Hb=hb, Gb=gb)
+            saved = CACHE.cached(os.path.join(cache_dir, 'sweep.npz'), dict(B=B_N, sd=sd, count=cname, input_sha256=CACHE.file_sha256(L.D.PORIAN)), rng, compute_sweep)
+            ST, Hb, Gb = pd.DataFrame(saved['table']), saved['Hb'], saved['Gb']
             sweep_out = ST.assign(count=cname)
         for w in L.SMALL:
             s2 = 2 * sdd[w]
@@ -239,7 +266,7 @@ def analyse(cname, verdicts=True):
                 lo, hi = ci(Cb)
                 rows_f.append(dict(count=cname, dataset=ds, factor=name, size=L.SMALL[w], width=w, C=C, lo=lo, hi=hi,
                                    base=base, pct=100 * C / base if np.isfinite(base) and base > 0 else np.nan,
-                                   two_sd=s2, verdict=verdict(C, lo, hi, base, s2) if verdicts else ""))
+                                   two_sd=s2, verdict=("UNDETERMINED (joint misfit)" if name.startswith("J (") and XJ["TC" if "(TC:" in name else "BC"]["sd_fit"] > JOINT_MISFIT else verdict(C, lo, hi, base, s2)) if verdicts else ""))
             # matched excess M
             mis = XJ["TC"]["sd_fit"] > JOINT_MISFIT
             Mo = g("TC20") if mis else gj("TC")
@@ -251,10 +278,11 @@ def analyse(cname, verdicts=True):
                     Gtxt = "G subtracted"
                 else:
                     Gtxt = "G not available (size not in sweep)"
+                    Mo, Mb = np.nan, np.full(B_J, np.nan)
             lo, hi = ci(Mb)
             rows_m.append(dict(count=cname, dataset=ds, size=L.SMALL[w], width=w, M=Mo, lo=lo, hi=hi, two_sd=s2,
                                base_used="X(TC20) (joint misfit)" if mis else "X^J(TC)", G=Gtxt,
-                               verdict=ret_verdict(Mo, lo, hi, s2) if verdicts else ""))
+                               verdict=(ret_verdict(Mo, lo, hi, s2) if np.isfinite(Mo) else "UNDETERMINED (G unavailable)") if verdicts else ""))
     return (pd.DataFrame(rows_x), pd.DataFrame(rows_f), pd.DataFrame(rows_m), pd.DataFrame(rows_j), sweep_out)
 
 
@@ -272,15 +300,15 @@ def joint_points_bc_all(ds):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.parse_args()
+    ap.add_argument("--count", choices=["tied", "untied", "both"], default="both")
+    args = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
     t0 = time.time()
     outs = {}
     for cname, verd in (("tied", True), ("untied", False)):
-        cache = os.path.join(OUT, f"e2_factors_{cname}.csv")
-        if os.path.exists(cache):
-            print("cached", cname)
+        if args.count not in ("both", cname):
             continue
+        cache = os.path.join(OUT, f"e2_factors_{cname}.csv")
         X, Fa, M, J, S = analyse(cname, verd)
         X.to_csv(os.path.join(OUT, f"e2_excess_{cname}.csv"), index=False)
         M.to_csv(os.path.join(OUT, f"e2_matched_{cname}.csv"), index=False)
