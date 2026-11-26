@@ -1,8 +1,11 @@
 # Experiments index (dated 11-25-2026)
 
-Convention (fixed 11-25-2026): the law is L(N) = E + A N^-alpha + B N^-beta where the **slow** term has the smaller exponent and the
-**fast ("dark matter") term, the one that matters at small N, has the larger exponent: beta_fast > alpha_slow**. Code that writes beta < alpha
-(`fit_two_term_N_only`, Grok's `conjecture_fits.py`) is the same law with the two names swapped. Every result states which term is which.
+Convention (fixed in experiment 06): the law is \(L(N) = E + A N^{-\alpha} + B N^{-\beta}\) with **\(\beta < \alpha\)**.
+
+- \(\alpha\) is the **fast** exponent (the larger one). \(A N^{-\alpha}\) dominates at small \(N\) and dies first as \(N\) grows.
+- \(\beta\) is the **slow** exponent (the smaller one). \(B N^{-\beta}\) dominates the approach to \(E\) at large \(N\).
+
+This is the constraint in `fit_two_term_N_only` and `py_src/conjecture_fits.py` (`beta = alpha * sigmoid(v)`). The root `README.md` and the DM-1 / DM-2 / DM-5 preregistrations use the opposite letters: their \(\beta\) is this index's \(\alpha\) (fast), and their \(\alpha\) is this index's \(\beta\) (slow). Those files are unchanged historical records. New writeups use \(\beta < \alpha\) and say which exponent is fast.
 
 | folder | what | by |
 |---|---|---|
@@ -16,5 +19,6 @@ Convention (fixed 11-25-2026): the law is L(N) = E + A N^-alpha + B N^-beta wher
 | `03_residual_structure` | in-sample residuals of the single-term and joint fits | Grok |
 | `04_fit_stability` | multi-start, bootstrap, Huber-delta sweep on Chinchilla | Grok |
 | `05_synthetic_recovery` | recover a known two-term law, plus a false-positive check | Grok |
+| `06_naming_convention` | index uses \(\beta < \alpha\), \(\alpha\) fast; maps the root README's swapped letters | Grok |
 
-`RESULTS.md` summarizes 01–05. Those five record the protocol in each README; a PREREG file was not committed before the fits. In `conjecture_fits.py`, alpha is the fast exponent and beta < alpha is the slow one (names swapped relative to the sentence above).
+`RESULTS.md` summarizes the numbered CPU experiments. They record the protocol in each README; a PREREG file was not committed before the fits.

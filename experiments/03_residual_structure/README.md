@@ -12,7 +12,7 @@ should show no smooth leftover trend in \(\log N\) or \(\log D\).
 
 This experiment is **in-sample**. A lower training error from a model with more parameters is not an extrapolation result. Holdout numbers are in experiments 01 and 02.
 
-Naming in this folder: \(\alpha\) is the fast exponent (larger, matters at small \(N\)) and \(\beta\) is the slow exponent, with \(\beta < \alpha\). The experiments index writes the same law with those names swapped (\(\beta_{\mathrm{fast}} > \alpha_{\mathrm{slow}}\)).
+Naming in this folder: \(\alpha\) is the fast exponent (larger, matters at small \(N\)) and \(\beta\) is the slow exponent, with \(\beta < \alpha\), matching the experiments index after experiment 06.
 
 ## Method
 

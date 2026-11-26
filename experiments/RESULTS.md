@@ -6,7 +6,7 @@ $$
 L(N) = E + \frac{A}{N^{\alpha}} + \frac{B}{N^{\beta}}, \qquad \beta < \alpha
 $$
 
-where \(\alpha\) is the fast exponent (it matters at small \(N\)) and \(\beta\) is the slow one. The experiments index writes the same law with those two names swapped. The joint baseline is the additive Chinchilla form \(E + A N^{-\alpha} + G D^{-\gamma}\), never the multiplicative form \(A N^{-\alpha} D^{-\beta}\).
+where \(\alpha\) is the fast exponent (it matters at small \(N\)) and \(\beta\) is the slow one. Experiment 06 makes the experiments index use this same naming. The root `README.md` still writes the fast exponent as \(\beta\). The joint baseline is the additive Chinchilla form \(E + A N^{-\alpha} + G D^{-\gamma}\), never the multiplicative form \(A N^{-\alpha} D^{-\beta}\).
 
 All five runs finished on CPU (Python 3.12.3, numpy / scipy / pandas / matplotlib). The repo pin is `>=3.11,<3.12`; this machine has 3.12.3, so the numbers below are from that interpreter. No SNAP, Sherlock, or FarmShare job was required.
 
@@ -17,6 +17,7 @@ All five runs finished on CPU (Python 3.12.3, numpy / scipy / pandas / matplotli
 3. **Residuals.** On 33 Chinchilla sizes at \(D/N \approx 20\), the single-term residual has no trend in \(\log N\) (Spearman \(-0.02\), quadratic \(R^2 = 0.03\)) and the two-term fit does not lower residual RMSE (0.0326 vs 0.0324). The joint RMSE of 0.096 on all 245 runs is four very short runs; the median absolute residual is 0.010.
 4. **Identifiability.** All 24 joint starts agree (parameter exponent 0.351–0.353). Bootstrap resampling does not: \(\log A\) correlates with \(\alpha\) at 0.999, and \(G\)'s 10th–90th percentile runs from \(3\times 10^{3}\) to \(4\times 10^{4}\). On the matched ladder the slow term's share of the loss at the median \(N\) runs from 0.14 to 0.89.
 5. **Synthetic recovery.** With 36 sizes and 2% log-noise, a two-term truth does not produce a reliable held-out win (mean RMSE difference versus the single term is \(+0.005\), win rate 10/20). Both exponents are recovered noiselessly by the self-check, and a single exponent is recovered at \(\sigma=0.02\) (median \(\alpha = 0.50\)). Two exponents of the same \(N\) are not. A joint \((N, D)\) grid does recover \(\alpha\) (median 0.356 vs 0.35).
+6. **Naming.** The experiments index now uses the code constraint \(\beta < \alpha\), with \(\alpha\) fast and \(\beta\) slow. The root README's \(\beta > \alpha\) is the same law with the letters swapped, and that file is left as written.
 
 ## What the negative results are not
 

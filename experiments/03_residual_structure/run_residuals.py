@@ -5,8 +5,7 @@ expected and is not evidence that the model extrapolates. Extrapolation is
 experiments 01 and 02.
 
 Naming: here alpha is the fast exponent (larger, dominates at small N) and
-beta is the slow exponent, with beta < alpha. The experiments index writes the
-same law with those two names swapped.
+beta is the slow exponent, with beta < alpha, matching the experiments index.
 """
 from __future__ import annotations
 
