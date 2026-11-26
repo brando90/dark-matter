@@ -1,0 +1,5 @@
+case,frac_two_term_rmse_lt_single,median_two_minus_single
+log_correction,0.35,1.046506656705512e-06
+single_term,0.4,1.9049604104929424e-06
+two_term_close,0.4,1.2804061776002656e-05
+two_term_separated,0.5,-1.7699127559736572e-07
