@@ -1,0 +1,12 @@
+---
+description: Core engineering, scaling-law math, environment, and data hygiene rules for dark-matter
+alwaysApply: true
+---
+
+Follow the canonical repository instructions in `AGENTS.md`. Key non-negotiable guardrails:
+
+1. **Environment**: Python `>=3.11,<3.12` via `uv`. Activate with `source "$HOME/uv_envs/dark-matter2/bin/activate"`. Keep CUDA/Linux-only deps gated by `platform_system != 'Darwin'` in `pyproject.toml`.
+2. **Scaling Law Form**: Always use the additive Chinchilla form `L(N, D) = E + A/N^α + B/D^β` (Huber-in-log-space `logsumexp` fit, Besiroglu et al. arXiv:2404.10102) or the two-term N-only conjecture `L(N) = E + A/N^α + B/N^β` (`β < α`). Never replace it with multiplicative `A * N^(-α) * D^(-β)`.
+3. **Data & Git Hygiene**: `.gitignore` excludes `data/**/*.csv` and tracks `!data/**/*.csv.gz` (and `.pickle.xz`). Never commit large uncompressed CSV/JSON files.
+4. **Path Handling**: Legacy files still reference `$HOME/dark-matter2`; in new scripts, resolve paths relative to `Path(__file__).resolve()` / repo root.
+5. **Scientific Rigor**: Never fabricate fit parameters, metrics, or plot observations. Do not apply Besiroglu/Chinchilla target coefficients (`E≈1.82, A≈482, α≈0.34, B≈2085, β≈0.36`) to non-Chinchilla empirical datasets.
