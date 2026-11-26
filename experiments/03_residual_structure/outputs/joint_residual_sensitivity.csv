@@ -1,0 +1,3 @@
+curve,subset,n,median_abs_residual,n_abs_gt_0.2,quad_r2_logN,quad_r2_logD
+chinchilla_all_runs,all,245,0.01003057718122724,4,0.02892158263770528,0.3203083360720209
+chinchilla_all_runs,drop_residual_above_0.5,243,0.009984846092694344,2,0.013366085452709675,0.07523332221320989
