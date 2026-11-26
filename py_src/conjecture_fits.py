@@ -287,7 +287,7 @@ def _diagnostics_power(kind: str, params: dict, x: np.ndarray) -> dict:
     return info
 
 
-def fit_power(kind: str, x, y, delta: float = 1e-3, n_starts: int = 12, seed: int = 0) -> FitResult:
+def fit_power(kind: str, x, y, delta: float = 1e-3, n_starts: int = 12, seed: int = 0, record_starts: bool = False) -> FitResult:
     x, y = _as64(x, y)
     if np.any(y <= 0) or np.any(x <= 0):
         raise ValueError("fit_power expects positive x and y")
@@ -298,7 +298,15 @@ def fit_power(kind: str, x, y, delta: float = 1e-3, n_starts: int = 12, seed: in
     def objective(theta):
         return _objective_power(kind, theta, logx, logy, delta)
 
-    return _minimize_starts(kind, objective, starts, n=len(y), finalize=lambda th: _pack_power(kind, th, logx), diagnose=lambda p: _diagnostics_power(kind, p, x))
+    return _minimize_starts(
+        kind,
+        objective,
+        starts,
+        n=len(y),
+        finalize=lambda th: _pack_power(kind, th, logx),
+        diagnose=lambda p: _diagnostics_power(kind, p, x),
+        record_starts=record_starts,
+    )
 
 
 def _pack_joint(theta: np.ndarray, extra: bool) -> dict:
@@ -385,7 +393,7 @@ def _starts_joint(n, d, y, extra: bool, n_starts: int, seed: int) -> list[np.nda
 
 
 def fit_joint(n, d, y, extra: bool = False, delta: float = 1e-3, n_starts: int = 12, seed: int = 0,
-              extra_starts: list | None = None) -> FitResult:
+              extra_starts: list | None = None, record_starts: bool = False) -> FitResult:
     n, d, y = _as64(n, d, y)
     if np.any(y <= 0) or np.any(n <= 0) or np.any(d <= 0):
         raise ValueError("fit_joint expects positive N, D, loss")
@@ -411,6 +419,7 @@ def fit_joint(n, d, y, extra: bool = False, delta: float = 1e-3, n_starts: int =
         n=len(y),
         finalize=lambda th: _pack_joint(th, extra),
         diagnose=diagnose,
+        record_starts=record_starts,
     )
 
 
@@ -426,8 +435,9 @@ def literature_joint_start() -> np.ndarray:
     )
 
 
-def _minimize_starts(kind, objective, starts, n: int, finalize, diagnose) -> FitResult:
+def _minimize_starts(kind, objective, starts, n: int, finalize, diagnose, record_starts: bool = False) -> FitResult:
     ranked = []
+    recorded = []
     n_success = 0
     n_finite = 0
     for theta0 in starts:
@@ -444,12 +454,16 @@ def _minimize_starts(kind, objective, starts, n: int, finalize, diagnose) -> Fit
         if bool(res.success) and fun < PENALTY / 10:
             n_success += 1
         ranked.append((fun, np.array(res.x, dtype=np.float64), bool(res.success), str(res.message)))
+        if record_starts and fun < PENALTY / 10:
+            recorded.append({"objective": fun, "success": bool(res.success), **{k: float(v) for k, v in finalize(res.x).items()}})
     ranked.sort(key=lambda t: t[0])
     best_fun, best_x, best_ok, best_msg = ranked[0]
     second = ranked[1][0] if len(ranked) > 1 else np.inf
     rel_gap = float((second - best_fun) / max(abs(best_fun), 1e-12)) if np.isfinite(second) else np.inf
     params = finalize(best_x) if best_fun < PENALTY / 10 else {}
     diagnostics = diagnose(params) if params else {"collapsed_to_single": True}
+    if record_starts:
+        diagnostics["starts"] = recorded
     return FitResult(
         kind=kind,
         params={k: float(v) for k, v in params.items()},
