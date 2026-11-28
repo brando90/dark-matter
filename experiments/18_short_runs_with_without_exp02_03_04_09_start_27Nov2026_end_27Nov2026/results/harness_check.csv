@@ -4,5 +4,5 @@ experiment,what,max_rel_diff,worst_at,rows
 09,"Chinchilla-run rows, RMSEs and AIC/BIC",5.606199744928539e-05,test_rmse @ chinchilla_runs/joint/joint_extra_n,3
 09,"all rows, RMSEs and AIC/BIC",0.02766682698741328,test_rmse @ pythia_pile_val/n_only/broken_power,22
 03,"Chinchilla joint rows, quad R2, RMSE, Spearman",0.00013413863572398515,quad_r2 @ joint,3
-04,best-fit rows: objective and parameters,0.0003618131934692549,A @ optimized_from_published_start,3
+04,best-fit rows: objective and parameters,0.0005411269212493685,G @ optimized_from_published_start,3
 04,"Huber-delta sweep: objective, gamma, alpha",0.0015584731149092229,alpha @ 0.0001,5

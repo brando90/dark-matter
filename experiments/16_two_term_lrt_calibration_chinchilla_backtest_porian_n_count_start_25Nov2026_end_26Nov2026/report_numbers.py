@@ -99,12 +99,12 @@ item("Gaussian LRT K log(RSS1/RSS2), K = 10: nominal false-positive rate "
      + " one-term ladders; 95% Wilson intervals " + " and ".join(f"{100 * e1[f'sigma={s}']['gauss_nominal_false_positive_ci95'][0]:.1f} to {100 * e1[f'sigma={s}']['gauss_nominal_false_positive_ci95'][1]:.1f}%" for s in SIG) + ")"
      + "; share of one-term ladders where the statistic is exactly zero " + " | ".join(pct(e1[f'sigma={s}']['gauss_stat_H0_zero_share'], 0) for s in SIG)
      + "; empirical null 95th percentile " + " | ".join(f"{e1[f'sigma={s}']['gauss_stat_H0_q95']:.2f}" for s in SIG) + " against the chi-square cutoff 5.99"
-     + "; the same statistic on the seven-size training ladders (K = 7): false-positive rate " + " | ".join(pct(e1[f'sigma={s}']['train7_gauss_nominal_false_positive_rate']) for s in SIG)
+     + "; at K = 10, nominal power " + " | ".join(pct(e1[f'sigma={s}']['gauss_nominal_power'], 0) for s in SIG)
+     + "; at K = 10, size-corrected power " + " | ".join(pct(e1[f'sigma={s}']['gauss_corrected_power'], 0) for s in SIG)
+     + "; at K = 10, AUC " + " | ".join(f"{e1[f'sigma={s}']['gauss_auc']:.3f}" for s in SIG)
+     + "; the same statistic on the seven-size training ladders (K = 7), for which only the false-positive rate was computed: false-positive rate " + " | ".join(pct(e1[f'sigma={s}']['train7_gauss_nominal_false_positive_rate']) for s in SIG)
      + " (" + " and ".join(f"{e1[f'sigma={s}']['train7_gauss_nominal_false_positive_count'][0]} of {e1[f'sigma={s}']['train7_gauss_nominal_false_positive_count'][1]}" for s in SIG)
-     + "; intervals " + " and ".join(f"{100 * e1[f'sigma={s}']['train7_gauss_nominal_false_positive_ci95'][0]:.1f} to {100 * e1[f'sigma={s}']['train7_gauss_nominal_false_positive_ci95'][1]:.1f}%" for s in SIG) + ")"
-     + "; nominal power " + " | ".join(pct(e1[f'sigma={s}']['gauss_nominal_power'], 0) for s in SIG)
-     + "; size-corrected power " + " | ".join(pct(e1[f'sigma={s}']['gauss_corrected_power'], 0) for s in SIG)
-     + "; AUC " + " | ".join(f"{e1[f'sigma={s}']['gauss_auc']:.3f}" for s in SIG) + ".")
+     + "; intervals " + " and ".join(f"{100 * e1[f'sigma={s}']['train7_gauss_nominal_false_positive_ci95'][0]:.1f} to {100 * e1[f'sigma={s}']['train7_gauss_nominal_false_positive_ci95'][1]:.1f}%" for s in SIG) + ")" + ".")
 item("Two-term fit lands on a boundary (a coefficient at its cap, E below 0.1% of the smallest loss, or the shallow exponent below 0.02): one-term truth "
      + " | ".join(pct(e1[f'sigma={s}']['two_term_boundary_H0']['any_boundary'], 0) for s in SIG) + "; two-term truth "
      + " | ".join(pct(e1[f'sigma={s}']['two_term_boundary_H1']['any_boundary'], 0) for s in SIG) + ".")

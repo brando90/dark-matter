@@ -37,7 +37,7 @@ for r in har.itertuples():
     item(f"Harness check, experiment {r.experiment}, {r.what} ({r.rows} rows): largest relative difference between arm all245 and the committed outputs {e(r.max_rel_diff)}, "
          f"at {r.worst_at}.")
 item(f"Prediction 5 (arm all245 reproduces committed key numbers to 1e-6): {'PASSED' if P['5']['passed'] else 'FAILED'}; largest relative difference {e(P['5']['max_rel_diff_chinchilla_rows'])} "
-     f"on Chinchilla-run rows and {e(P['5']['max_rel_diff_all_rows'])} over all rows (threshold {e(P['5']['threshold'])}).")
+     f"on Chinchilla-only rows (all of experiment 04 and the Chinchilla-run rows of experiments 02, 03 and 09) and {e(P['5']['max_rel_diff_all_rows'])} over all rows (threshold {e(P['5']['threshold'])}).")
 for r in inv.itertuples():
     item(f"Arm invariance, experiment {r.experiment}, {r.rows}: {r.n} rows, largest absolute difference between arms {r.max_abs_diff_between_arms:g}.")
 p1 = P["1"]

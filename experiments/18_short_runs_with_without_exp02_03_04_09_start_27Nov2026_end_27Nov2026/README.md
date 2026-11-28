@@ -15,7 +15,7 @@ The eleven Chinchilla runs with fewer than one token per parameter, and above al
 1. A wrapper, `run_arm.py`, loads each original experiment script unchanged, replaces its `load_chinchilla_runs` by a version that keeps either all 245 runs (arm `all245`) or only runs with D/N of at least 1 (arm `drop_DN_lt_1`, 234 runs), points its output folder at `outputs/<experiment>/<arm>/`, and calls its `main()`. Nothing in experiments 02, 03, 04 or 09 is edited. The matched ladder of D/N near 20 (`chinchilla_matched`) is untouched in both arms, so every N-only result on that ladder must be identical between arms.
 2. Harness check: arm `all245` must reproduce the committed outputs of each experiment. I report the largest relative difference; if it is above 1e-6 I say so and compare the arms against each other, in one environment, instead.
 3. `summarize.py` builds the with-and-without tables for the Chinchilla rows only.
-4. `trace_short_runs.py` groups the 245 runs by the nearest of Hoffmann et al.'s nine IsoFLOP budgets, lists where the eleven short runs sit in their slices, and checks the dataset's stated source. It does not and cannot check whether any single run was really trained; the original run logs are not public.
+4. `trace_short_runs.py` groups the 245 runs into 21 columns of nearly equal compute (a new column starts at a gap of more than 0.05 dex in sorted log10 FLOP, not at Hoffmann et al.'s nine nominal IsoFLOP budgets), lists where the eleven short runs sit in their slices, and checks the dataset's stated source. It does not and cannot check whether any single run was really trained; the original run logs are not public.
 
 Every extra term in the re-run experiments is additive.
 
@@ -38,7 +38,7 @@ The verdict, numbers and caveats are in [results.md](results.md); the provenance
 2. Prediction 2 PASSED: no extra-term model beats its base model by more than 0.0043% in either arm; without the 11 runs joint_extra_n is 8.9% worse than joint.
 3. Prediction 3 PASSED: the quadratic R-squared of the joint residuals against log D falls from 0.320319 to 0.003811.
 4. Prediction 4 PASSED: the token exponent falls from 0.455748 to 0.339172; the published value is 0.36. A post hoc control of 200 random removals of 11 runs never gets below 0.391, and removing the k lowest-ratio runs one at a time lowers it at every step from k = 0 to k = 5.
-5. Prediction 5 FAILED: arm all245 differs from the committed outputs by up to 3.4e-04 on Chinchilla-run rows (2.8e-02 over all rows); this sandbox runs Python 3.13, not the pinned 3.11. The with-and-without comparison is within one environment.
+5. Prediction 5 FAILED: arm all245 differs from the committed outputs by up to 1.6e-03 on Chinchilla-only rows (2.8e-02 over all rows); this sandbox runs Python 3.13, not the pinned 3.11. The with-and-without comparison is within one environment.
 6. Prediction 6 PASSED, but it was written after a data-only look at the same rows.
 
 ## Files

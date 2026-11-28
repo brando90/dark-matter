@@ -13,7 +13,7 @@ Objective: Huber(delta) of the log-residual r = log(L_hat) - log(L) (delta = 1e-
 py_src/scaling_laws_fit.py) or the plain sum of squared log-residuals ('ls').
 
 Fitting = random exponent sampling + non-negative least squares for the linear coefficients
-(variable projection), then L-BFGS-B refinement of the best starts, optionally warm-started from a
+(variable projection), then trust-region (scipy least_squares, method trf) refinement of the best starts, optionally warm-started from a
 nested simpler fit so that a bigger model can never score worse in-sample than the model it contains.
 """
 from __future__ import annotations

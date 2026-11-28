@@ -26,7 +26,7 @@ TOKEN = re.compile(r"(?<![\w.])[-+]?\d[\d,]*(?:\.\d+)?(?:e[-+]?\d+)?%?")
 def numbers(text):
     out = []
     for tok in TOKEN.findall(text):
-        out.append(tok.lstrip("+-").rstrip("%").rstrip(","))
+        out.append(tok.lstrip("+").rstrip("%").rstrip(","))  # only "+" is dropped: a minus sign must match the cited item verbatim
     return out
 
 

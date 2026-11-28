@@ -40,7 +40,7 @@
       "passed": true
     },
     "5": {
-      "max_rel_diff_chinchilla_rows": 0.0003439427538053267,
+      "max_rel_diff_chinchilla_rows": 0.0015584731149092229,
       "max_rel_diff_all_rows": 0.02766682698741328,
       "threshold": 1e-06,
       "passed": false
@@ -85,8 +85,8 @@
     {
       "experiment": "04",
       "what": "best-fit rows: objective and parameters",
-      "max_rel_diff": 0.0003618131934692549,
-      "worst_at": "A @ optimized_from_published_start",
+      "max_rel_diff": 0.0005411269212493685,
+      "worst_at": "G @ optimized_from_published_start",
       "rows": 3
     },
     {

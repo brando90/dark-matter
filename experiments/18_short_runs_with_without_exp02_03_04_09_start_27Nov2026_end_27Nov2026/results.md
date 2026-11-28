@@ -18,7 +18,7 @@ Verdict: **THE 11 SHORT RUNS DRIVE THE CHINCHILLA RESULTS OF EXPERIMENTS 02, 03,
 | 2 | No extra-term model beats its base by more than 2% | Largest gain 0.0043% over 12 comparisons; without the 11 runs joint_extra_n is 8.9% worse than joint | PASSED | 20, 21 |
 | 3 | Experiment 03: quadratic R-squared against log D below 0.10 without the 11; Spearman correlations below 0.2 | 0.320319 to 0.003811; Spearman with log N -0.017069, with log D 0.046044 | PASSED | 25 |
 | 4 | Experiment 04: token exponent falls by at least 0.03 toward 0.36 | 0.455748 to 0.339172, a fall of 0.116576; 0.0208 below the published value | PASSED | 27 |
-| 5 | Arm all245 reproduces the committed key numbers to 1e-6 | Largest relative difference 3.4e-04 on Chinchilla-run rows and 2.8e-02 over all rows | FAILED | 9 |
+| 5 | Arm all245 reproduces the committed key numbers to 1e-6 | Largest relative difference 1.6e-03 on Chinchilla-only rows (all of experiment 04 and the Chinchilla-run rows of experiments 02, 03 and 09) and 2.8e-02 over all rows | FAILED | 9 |
 | 6 | Ten of the 11 sit at the large-N end of the column near 1e19 FLOP, the eleventh is the 12.57 billion parameter run of the 6e20 column | Exactly that: the 10 largest of 32 runs, and the largest of its column | PASSED (written after a data-only look, so a check of that look, not a blind prediction) | 36 |
 
 ## Size holdout of experiments 02 and 09 (post hoc decomposition)
@@ -78,7 +78,7 @@ The 200 random removals took out 0, 1, 2 or 3 of the 11 short runs in 124, 56, 1
 | Experiment 02, Chinchilla-run rows against the committed outputs | Largest relative difference 3.4e-04 | 2 |
 | Experiment 09, Chinchilla-run rows | 5.6e-05 | 4 |
 | Experiment 03, Chinchilla joint rows | 1.3e-04 | 6 |
-| Experiment 04, best-fit rows; Huber-delta sweep | 3.6e-04; 1.6e-03 | 7, 8 |
+| Experiment 04, best-fit rows; Huber-delta sweep | 5.4e-04; 1.6e-03 | 7, 8 |
 | Experiments 02 and 09, all rows | 6.2e-03 and 2.8e-02 (a non-convex broken-power fit on the Pythia ladder) | 3, 5 |
 | Rows that cannot depend on the short runs, experiments 02, 09 and 03 | 24, 19 and 4 rows identical between arms | 10, 11, 12 |
 

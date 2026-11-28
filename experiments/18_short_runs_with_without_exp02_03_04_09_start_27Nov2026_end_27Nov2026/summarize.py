@@ -102,7 +102,7 @@ w, where, n = maxrel(com09[com09.dataset == "chinchilla_runs"], a09[a09.dataset 
 w, where, n = maxrel(com09, a09, key09, ["train_rmse", "test_rmse", "aic", "bic"]); h.append(("09", "all rows, RMSEs and AIC/BIC", w, where, n))
 cc, aa = com03[com03.curve == "chinchilla_all_runs"], a03[a03.curve == "chinchilla_all_runs"]
 w, where, n = maxrel(cc, aa, ["kind"], ["quad_r2", "residual_rmse", "spearman_r"]); h.append(("03", "Chinchilla joint rows, quad R2, RMSE, Spearman", w, where, n))
-w, where, n = maxrel(pc_c, pc_a, ["which"], ["objective", "E", "A", "alpha", "gamma"]); h.append(("04", "best-fit rows: objective and parameters", w, where, n))
+w, where, n = maxrel(pc_c, pc_a, ["which"], ["objective", "E", "A", "alpha", "G", "gamma"]); h.append(("04", "best-fit rows: objective and parameters", w, where, n))
 w, where, n = maxrel(hd_c, hd_a, ["delta"], ["objective", "gamma", "alpha"]); h.append(("04", "Huber-delta sweep: objective, gamma, alpha", w, where, n))
 harness = pd.DataFrame(h, columns=["experiment", "what", "max_rel_diff", "worst_at", "rows"])
 harness.to_csv(RES / "harness_check.csv", index=False)
@@ -152,7 +152,6 @@ P["2"] = {"max_gain_any_case": gmax, "n_cases": int(len(cases)), "n_cases_with_p
           "worst_loss_vs_base_size_02_drop": float(-cases[(cases.exp == "02") & (cases.arm == "drop_DN_lt_1") & (cases.protocol == "size") & (cases.extra == "joint_extra_n")].gain_pooled.iloc[0]),
           "passed": bool(gmax <= 0.02)}
 # 3: experiment 03, arm without the 11 runs
-rd_all, rd_drop = w03.loc["joint_vs_logD"], w03.loc["joint_vs_logD"]
 P["3"] = {"quad_r2_logD_all": float(w03.loc["joint_vs_logD", "quad_r2_all"]), "quad_r2_logD_drop": float(w03.loc["joint_vs_logD", "quad_r2_drop"]),
           "spearman_logN_drop": float(w03.loc["joint", "spearman_r_drop"]), "spearman_logD_drop": float(w03.loc["joint_vs_logD", "spearman_r_drop"]),
           "residual_rmse_all": float(w03.loc["joint", "residual_rmse_all"]), "residual_rmse_drop": float(w03.loc["joint", "residual_rmse_drop"]),
@@ -163,7 +162,8 @@ ga, gd = float(w04.loc[w04.arm == "all245", "gamma"].iloc[0]), float(w04.loc[w04
 P["4"] = {"gamma_all": ga, "gamma_drop": gd, "fall": ga - gd, "published_gamma": 0.36, "moves_toward_published": bool(abs(gd - 0.36) < abs(ga - 0.36)),
           "distance_to_published_drop": gd - 0.36, "passed": bool(ga - gd >= 0.03 and abs(gd - 0.36) < abs(ga - 0.36))}
 # 5: harness
-chin_rows = harness[harness.what.str.contains("Chinchilla")]
+# experiment 04 is Chinchilla-only, so its rows count as Chinchilla rows even though their label does not say so
+chin_rows = harness[harness.what.str.contains("Chinchilla") | (harness.experiment == "04")]
 P["5"] = {"max_rel_diff_chinchilla_rows": float(chin_rows.max_rel_diff.max()), "max_rel_diff_all_rows": float(harness.max_rel_diff.max()), "threshold": 1e-6,
           "passed": bool(harness.max_rel_diff.max() <= 1e-6)}
 S["predictions"] = P

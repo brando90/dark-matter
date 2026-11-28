@@ -55,7 +55,6 @@ assert len(c1e19) == 1, c1e19
 c1e19 = int(c1e19.column.iloc[0])
 in_1e19 = short[short.column == c1e19]
 top_n = runs[runs.column == c1e19].nlargest(len(in_1e19), "N").index
-ten_are_largest = bool(set(in_1e19.index) == set(short.merge(runs[["model_name", "N", "D"]], on=["model_name", "N", "D"]).index) or True)
 largest_ids = set(runs.loc[top_n, ["model_name", "D"]].apply(tuple, axis=1))
 short_ids = set(in_1e19[["model_name", "D"]].apply(tuple, axis=1))
 rest = short[short.column != c1e19]

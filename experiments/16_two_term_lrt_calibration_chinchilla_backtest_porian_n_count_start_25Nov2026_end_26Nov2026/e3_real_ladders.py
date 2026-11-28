@@ -71,7 +71,8 @@ def _boot_one(args):
     L = L1_clean * np.exp(rng.normal(0.0, sigma, len(N)))
     one = se.fit(se.ONE_N, N, L, objective="ls", seed=seed, **FIT)
     two = se.fit(se.TWO_N, N, L, objective="ls", seed=seed + 1, warm=one, **FIT)
-    return float(len(N) * np.log(one.rss / max(two.rss, 1e-300)))
+    # The 2-term model nests the 1-term model, so the statistic is >= 0 by construction; a negative value is round-off.
+    return max(float(len(N) * np.log(one.rss / max(two.rss, 1e-300))), 0.0)
 
 
 def part_a(name, d, boot, workers):
@@ -82,7 +83,9 @@ def part_a(name, d, boot, workers):
     one_h = se.fit(se.ONE_N, N, L, objective="huber", n_starts=300, n_refine=5, seed=3)
     two_h = se.fit(se.TWO_N, N, L, objective="huber", n_starts=300, n_refine=5, seed=4, warm=one_h)
     half_h = se.fit(se.TWO_N_HALF, N, L, objective="huber", n_starts=300, n_refine=5, seed=5, warm=None)
-    stat = float(K * np.log(one_l.rss / max(two_l.rss, 1e-300)))
+    # Clamped at 0 (11-27-2026 fix): a collapsed 2-term fit can land 1 ULP above the 1-term RSS, giving -8.9e-16 and a p-value
+    # of 0.647 instead of 1.0 when the draws are compared with the unclamped statistic.
+    stat = max(float(K * np.log(one_l.rss / max(two_l.rss, 1e-300))), 0.0)
     sigma = float(np.sqrt(one_l.rss / max(K - 3, 1)))
     clean = se.predict(one_l, N)
     jobs = [(N, clean, sigma, 9_000 + i) for i in range(boot)]
@@ -146,10 +149,24 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--boot", type=int, default=200)
     ap.add_argument("--workers", type=int, default=2)
+    ap.add_argument("--redo-full-ladder", metavar="FAMILY", default=None,
+                    help="recompute only the full-ladder test (part A) of one family and replace its record in e3_summary.json, "
+                         "keeping the saved forecasts; prints every field that differs from the old record")
     ap.add_argument("--analyze-only", action="store_true",
                     help="recompute only the forecast aggregates from results/e3_forecasts.csv (keeps the saved full-ladder fits)")
     a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
+    if a.redo_full_ladder:
+        old = json.loads((OUT / "e3_summary.json").read_text())
+        name = a.redo_full_ladder
+        new = part_a(name, load_ladder(FAMILIES[name]), a.boot, a.workers)
+        prev = next(x for x in old["full_ladder"] if x["ladder"] == name)
+        new = json.loads(json.dumps(new))
+        diff = {k: (prev.get(k), new.get(k)) for k in sorted(set(prev) | set(new)) if prev.get(k) != new.get(k)}
+        print(f"[E3 redo] {name}: fields that differ from the saved record: {json.dumps(diff)}", flush=True)
+        old["full_ladder"] = [new if x["ladder"] == name else x for x in old["full_ladder"]]
+        (OUT / "e3_summary.json").write_text(json.dumps(old, indent=2))
+        return
     if a.analyze_only:
         old = json.loads((OUT / "e3_summary.json").read_text())
         summ = dict(full_ladder=old["full_ladder"])

@@ -52,6 +52,9 @@ All five criteria pass. Numbers are in [results.md](results.md).
 2. `calibration_power.py`: criteria 3 and 4. Writes `results/calibration.csv` and `results/calibration_summary.json`.
 3. `test_fail_loud.py`: criterion 5, runnable with pytest or directly.
 4. `py_src/two_term_lrt.py` and `py_src/scaling_laws_fit.py`: the library change under test.
+5. `posthoc_multiplicative_noise.py`: the post hoc multiplicative-noise check, not preregistered. Writes `results/posthoc_multiplicative.csv` and `results/posthoc_multiplicative_summary.json`.
+6. `report_numbers.py`: writes `results/report_numbers.txt`, the numbered items that every number in `results.md` is traced to.
+7. `check_results_md.py`: exits with an error if a number in a table row of `results.md` is missing from the items that row cites.
 
 ## Rerun
 
@@ -60,4 +63,7 @@ source "$HOME/uv_envs/dark-matter2/bin/activate"
 python experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/parity_dm1b.py
 python experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/calibration_power.py --workers 2
 python -m pytest experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/test_fail_loud.py -q
+python experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/posthoc_multiplicative_noise.py --workers 2
+python3 -I experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/report_numbers.py > experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/results/report_numbers.txt
+python3 -I experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/check_results_md.py
 ```

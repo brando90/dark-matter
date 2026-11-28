@@ -12,7 +12,7 @@ Owner: Claude Code, Claude Sonnet 5.5, on CPU. Full report: [REPORT.md](REPORT.m
 
 ## Bottom line
 
-I found no evidence that a second, shallower power law in model size is a real feature of these data, and I cannot rule one out either. The likelihood-ratio test the repo ships never fires: on simulated ten-size ladders its largest statistic sits between about forty-three thousand and ninety-four thousand times below the five percent cutoff, so its p-value of one carries no information. A Gaussian version is roughly calibrated at ten sizes, with false-positive rates of five point three and two point seven percent, but on seven-size ladders its power is only sixty percent at zero point three percent noise and eighteen percent at one percent noise, and the two-term fit lands on a boundary in about four of ten one-term ladders and half of the two-term ladders. On the Chinchilla points a second data term lowers the fit objective by thirty-seven and a half percent, but its gain in token extrapolation falls from seventy-nine to sixty-six percent when the four shortest runs are dropped and to nineteen percent when all eleven runs under one token per parameter are dropped; both cut-offs were chosen after seeing the residuals. On the Porian grid the way parameters are counted moves the compute-optimal exponent between about zero point five two and zero point seven five, and the apparent second size term at the small end lowers the fit objective by about ten point five to ten point eight percent when embeddings are counted and by at most about two point two five percent when they are not.
+I found no evidence that a second, shallower power law in model size is a real feature of these data, and I cannot rule one out either. The likelihood-ratio test the repo ships never fires: on simulated ten-size ladders its largest statistic sits between about forty-three thousand and ninety-four thousand times below the five percent cutoff, so its p-value of one carries no information. A Gaussian version is roughly calibrated at ten sizes, with false-positive rates of five point three and two point seven percent, but even at ten sizes its power is only sixty percent at zero point three percent noise and eighteen percent at one percent noise (on the seven-size training ladders only its false-positive rate was measured, ten and two point seven percent), and the two-term fit lands on a boundary in about four of ten one-term ladders and half of the two-term ladders. On the Chinchilla points a second data term lowers the fit objective by thirty-seven and a half percent, but its gain in token extrapolation falls from seventy-nine to sixty-six percent when the four shortest runs are dropped and to nineteen percent when all eleven runs under one token per parameter are dropped; both cut-offs were chosen after seeing the residuals. On the Porian grid the way parameters are counted moves the compute-optimal exponent between about zero point five two and zero point seven five, and the apparent second size term at the small end lowers the fit objective by about ten point five to ten point eight percent when embeddings are counted and by at most about two point two five percent when they are not.
 
 ## Results
 
@@ -29,9 +29,9 @@ Every row is copied from results/report_numbers.txt, which report_numbers.py pri
 | Repo statistic, ranking quality (AUC) | 0.899 | 0.728 | 4 |
 | Repo statistic, power at the 95th percentile of its own null | 66% | 36% | 4 |
 | Gaussian statistic, 10 sizes, false-positive rate | 5.3% | 2.7% | 5 |
+| Gaussian statistic, 10 sizes, nominal power | 60% | 18% | 5 |
+| Gaussian statistic, 10 sizes, AUC | 0.900 | 0.770 | 5 |
 | Gaussian statistic, 7 sizes, false-positive rate | 10.0% | 2.7% | 5 |
-| Gaussian statistic, 7 sizes, nominal power | 60% | 18% | 5 |
-| Gaussian statistic, 7 sizes, AUC | 0.900 | 0.770 | 5 |
 | Two-term fit on a boundary, one-term truth and two-term truth | 41% and 50% | 37% and 49% | 6 |
 | Median fitted beta (truth 0.15) and share within 0.05 of truth | 0.23 and 8% | 0.21 and 11% | 7 |
 | Forecast error, two-term truth, median, one-term vs two-term | 0.00844 vs 0.00688 | 0.01236 vs 0.01474 | 8 |
@@ -73,8 +73,8 @@ Every row is copied from results/report_numbers.txt, which report_numbers.py pri
 
 | Metric | Value | Item |
 |---|---|---|
-| Bootstrap p-value, 200 draws: pythia / pythia-deduped / opt | 0.542 / 0.214 / 0.647 | 22, 23, 24 |
-| Gaussian likelihood-ratio statistic: pythia / pythia-deduped / opt | 0.006 / 2.003 / -0.000 | 22, 23, 24 |
+| Bootstrap p-value, 200 draws: pythia / pythia-deduped / opt | 0.542 / 0.214 / 1.000 | 22, 23, 24 |
+| Gaussian likelihood-ratio statistic: pythia / pythia-deduped / opt | 0.006 / 2.003 / 0.000 | 22, 23, 24 |
 | Rolling-origin forecasts, two-term against one-term: wins, ties, losses | 0, 12, 1 | 25 |
 | Mean absolute log error over the 13 forecasts, one-term vs two-term | 0.02852 vs 0.02868 | 25 |
 
@@ -121,3 +121,4 @@ Every row is copied from results/report_numbers.txt, which report_numbers.py pri
 4. Review: a four-reviewer pass by Claude Opus 5.5 at maximum effort found no critical issues, and a fresh re-verification found no critical or major issue. All fixes are applied in REPORT.md.
 5. Relation to other folders as of commit 3626ba0: folder 15 (ub9sc) finds the second term convention dependent, with 1 of 38 bootstrap detections when embeddings are left out of the count and 13 of 38 and 12 of 38 with the tied and untied counts. My E4 points the same way in direction only, on a different slice and without a calibrated test. Folder 14 (ub9sc) is scientifically unresolved because its control gates fail, and it does not test the Chinchilla finding above. Folder 11, the embedding ladder, has only its README on main.
 6. Provenance check: check_results_md.py reads the tables above and fails if any number in a row is missing from the items that row cites.
+7. Corrections on 11-27-2026, after a mega QA pass: the Gaussian statistic's nominal power of 60% and 18% and its area under the curve of 0.900 and 0.770 were measured on the ten-size ladders and are now labelled that way (they had been labelled seven-size, where only the false-positive rate was computed); the bootstrap p-value of the OPT ladder is 1.000, not 0.647, because its collapsed two-term fit gave a statistic of minus 9e-16 that is now clamped at zero and the OPT test was recomputed with the same seeds. No other number changed.
