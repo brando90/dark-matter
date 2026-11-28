@@ -16,7 +16,7 @@ The **Dark Matter** project investigates higher-order / "missing" terms in neura
   `L(N, D) = E + A / N^α + B / D^β`
   Fitted with the Huber-in-log-space `logsumexp` objective (`fit_joint_powerlaw` in `py_src/scaling_laws_fit.py`, `delta=1e-3`, `L-BFGS-B`), assuming compute `C ≈ 6 * N * D` and optimal allocation exponent `a = β / (α + β)`.
 - **Two-term N-only conjecture**:
-  `L(N) = E + A / N^α + B / N^β` with `β < α` in the code's naming (`fit_two_term_N_only`; the same law as the README's β > α with the two names swapped: always say which term is the fast one, the one that matters at small N), tested against a 1-term baseline via the Huber likelihood-ratio test (`lr_test`).
+  `L(N) = E + A / N^α + B / N^β` with `β < α` in the code's naming (`fit_two_term_N_only`; the same law as the README's β > α with the two names swapped: always say which term is the fast one, the one that matters at small N), tested against a 1-term baseline with `lr_test(N, L)`, the parametric-bootstrap likelihood-ratio test ported from DM-1b (`py_src/two_term_lrt.py`; additive constant-sd noise assumed, over-rejects under wide-range multiplicative noise, see experiment 17). The old chi-square test on the Huber objective is kept as `lr_test_chi2_uncalibrated`; it cannot reject (experiment 16).
 - **Non-negotiable rule**: **Never** replace the additive Chinchilla form `E + A/N^α + B/D^β` with a multiplicative `A * N^(-α) * D^(-β)` form.
 
 ## 2. Environment & Common Commands
@@ -50,7 +50,8 @@ The **Dark Matter** project investigates higher-order / "missing" terms in neura
 ## 3. Repository Structure
 
 - `py_src/` — Reusable Python modules:
-  - `scaling_laws_fit.py`: `JointParams`, `TwoTermParams`, `fit_joint_powerlaw`, `fit_two_term_N_only`, `lr_test`, `compute_optimal_from_joint`.
+  - `scaling_laws_fit.py`: `JointParams`, `TwoTermParams`, `fit_joint_powerlaw`, `fit_two_term_N_only`, `lr_test`, `compute_optimal_from_joint`. `fit_two_term_N_only` and `lr_test` raise `InsufficientDataError` on an empty or too-small selection; never fall back to other data.
+  - `two_term_lrt.py`: DM-1b's bootstrap likelihood-ratio test (`bootstrap_lr_test`, a verbatim copy of its fitter block checked by `experiments/17_*/parity_dm1b.py`), `fit_one_and_two_term`, `validate_ladder`.
   - `chinchilla_verification.py`: `run_chinchilla_verification`, synthetic Chinchilla generator, residual/compute-loss/IsoFLOP plotting utilities.
 - `experiments/00_prepare_data_for_scaling_law_fitting/` — Experiment scripts, shell launcher, reference papers (`research_papers/`), and generated outputs (`plots_out_*/`).
 - `data/data_resolving_discrepancies/` — Porian et al. (arXiv:2406.19146) dataset (`experiment_results.pickle.xz`) and `EXPERIMENTS_RESULTS_SUMMARY.md`.

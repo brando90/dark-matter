@@ -1,0 +1,31 @@
+{
+  "source_identical": true,
+  "source_lines_compared": 187,
+  "rows": 220,
+  "rows_all_ok": 220,
+  "k_mismatch": 0,
+  "b_mismatch": 0,
+  "det_mismatch": 0,
+  "T_mismatch": 0,
+  "p_mismatch": 0,
+  "max_T_rel_diff": 1.8125564008171892e-16,
+  "max_rss1_rel_diff": 9.93129189996722e-17,
+  "max_rss2_rel_diff": 9.985502008591496e-17,
+  "rows_with_nonfinite_bootstrap": 0,
+  "detections_lib": 118,
+  "detections_ref": 118,
+  "rows_by_s": {
+    "0.0": 48,
+    "0.03": 41,
+    "0.1": 45,
+    "0.3": 43,
+    "1.0": 43
+  },
+  "rows_large_ladders": 20,
+  "seconds": 62.3,
+  "numpy": "2.5.3",
+  "python": "3.13.18",
+  "sample_seed": 20261127,
+  "criteria_1_pass": true,
+  "criteria_2_pass": true
+}

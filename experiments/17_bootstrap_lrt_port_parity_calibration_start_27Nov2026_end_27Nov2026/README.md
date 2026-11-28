@@ -1,10 +1,10 @@
 # Porting the bootstrap likelihood-ratio test into lr_test, and making fit_two_term_N_only fail loudly (11-27-2026)
 
-**Doc link:** <https://github.com/brando90/dark-matter/blob/main/experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026/README.md>
+**Doc link:** <https://github.com/brando90/dark-matter/blob/main/experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/README.md>
 
-**TLDR:** The two-term test in `py_src/scaling_laws_fit.py` could never reject, so I replaced it with the calibrated bootstrap test the repo already had in `experiments/dm1_power_analysis/`, and made the two-term fitter raise instead of quietly fitting other data. This folder checks the port against committed rows and against fresh simulations. Status: PREREGISTERED on 11-27-2026, before any of the checks below was run. Results: pending.
+**TLDR:** The two-term test in `py_src/scaling_laws_fit.py` could never reject, so I replaced it with the calibrated bootstrap test the repo already had in `experiments/dm1_power_analysis/`, and made the two-term fitter raise instead of quietly fitting other data. The port reproduces 220 of 220 committed DM-1b rows exactly, rejects 33 of 600 additive-noise null ladders (0.055) and finds a strong second term in 40 of 40. Post hoc, with multiplicative noise and a wide loss range it rejects 0.115 of null ladders, about twice its nominal level.
 
-Date: 11-27-2026. Owner: Claude Code, Claude Sonnet 5.5, CPU only.
+Date: 11-27-2026. Status: COMPLETE. Owner: Claude Code, Claude Sonnet 5.5, CPU only.
 
 ## Hypothesis
 
@@ -34,7 +34,17 @@ Written on 11-27-2026 before `parity_dm1b.py` or `calibration_power.py` was run.
 
 ## Result
 
-Pending. This file is updated, and `results.md` written, after the runs.
+All five criteria pass. Numbers are in [results.md](results.md).
+
+1. The fitter block is identical to `dm1b.py`'s after three renames, and 220 of 220 sampled committed rows reproduce every decision field, with the largest relative difference in T at 1.8e-16.
+2. On six hundred fresh one-term ladders with additive noise the public `lr_test` rejects 33 times, a rate of 0.055; the worst of the three cells is 0.085, inside the 0.1 cell gate. It detects DM-1b's positive control in 40 of 40 ladders and the weak cell in 2 of 40, as DM-1b predicts.
+3. Post hoc, not preregistered: with log-normal multiplicative noise at relative sd 0.005 the pooled null rejection is 0.115, and the rate rises with the loss range, 0.05 for losses of about 2 to 3.4, 0.12 for 2 to 5.5 and 0.175 for 2 to 10. The test assumes additive noise of constant size, so on real ladders a detection is weaker evidence than its five percent level suggests.
+4. All seventeen fail-loud tests pass. The repo smoke test now fits a genuine twenty-point N-ladder; it used to select zero points and silently fit all four hundred points of a grid whose data size also varied.
+
+## What would move this next
+
+1. Add a multiplicative-noise version of the bootstrap, resampling log residuals, and check its null calibration across loss ranges before using the test on Porian or Chinchilla ladders again.
+2. Re-run the folder 15 detections with that version and compare the 26 of 114 count.
 
 ## Files
 
@@ -47,7 +57,7 @@ Pending. This file is updated, and `results.md` written, after the runs.
 
 ```bash
 source "$HOME/uv_envs/dark-matter2/bin/activate"
-python experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026/parity_dm1b.py
-python experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026/calibration_power.py --workers 2
-python -m pytest experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026/test_fail_loud.py -q
+python experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/parity_dm1b.py
+python experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/calibration_power.py --workers 2
+python -m pytest experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/test_fail_loud.py -q
 ```

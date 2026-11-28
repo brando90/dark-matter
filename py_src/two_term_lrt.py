@@ -13,7 +13,7 @@ calibrated: folder 16 measured its statistic 4e4 to 9e4 times below its cutoff o
 
 Provenance. The block between the BEGIN and END markers is copied from experiments/dm1_power_analysis/dm1b.py
 (commit 3626ba0) with exactly three textual changes: dm1.ALPHA_GRID, dm1.A2_GRID, dm1.D2_GRID became module constants.
-experiments/19_*/parity_dm1b.py re-derives this block from dm1b.py, applies the same three changes, and fails if it
+experiments/17_*/parity_dm1b.py re-derives this block from dm1b.py, applies the same three changes, and fails if it
 differs from this file; it also reproduces committed DM-1b rows (T, k, B used, p, decision) from their seeds.
 
 Naming. DM-1b's fitter calls the SLOW exponent alpha and the FAST exponent beta (beta = alpha + delta). The repo's
@@ -352,7 +352,9 @@ def bootstrap_lr_test(N, L, *, B: int = B_DEFAULT, level: float = 0.05, rng=0, e
     early_stop : DM-1b's exact decision shortcut (stop after B_STAGE1 refits once more than k_max exceed T). The
            decision is unchanged; p_value is then computed from B_used refits and is only a rough indicator.
     The test assumes additive Gaussian noise on L with constant sd; it was calibrated on DM-1's ladders (5 to 33
-    points, 1e5 to 1e9), where its pooled null rejection was 0.049.
+    points, 1e5 to 1e9), where its pooled null rejection was 0.049 (0.055 on 600 fresh ladders in folder 17). With
+    multiplicative (log-normal) noise it over-rejects when the loss range is wide: folder 17, post hoc, found null
+    rejection 0.175, 0.12 and 0.05 for loss ranges of about 2 to 10, 2 to 5.5 and 2 to 3.4 at relative sd 0.005.
     """
     if not (0.0 < level < 1.0):
         raise ValueError(f"lr_test: level must be in (0, 1), got {level}")

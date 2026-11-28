@@ -1,6 +1,6 @@
-# Experiments index (dated 11-26-2026)
+# Experiments index (dated 11-27-2026)
 
-As of 11-26-2026.
+As of 11-27-2026.
 
 Convention (fixed in experiment 06): the law is \(L(N) = E + A N^{-\alpha} + B N^{-\beta}\) with **\(\beta < \alpha\)**.
 
@@ -32,5 +32,6 @@ This is the constraint in `fit_two_term_N_only` and `py_src/conjecture_fits.py` 
 | `14_e2_token_budget_hparams_small_end` | E2: [scientifically unresolved](14_e2_token_budget_hparams_small_end/results.md); conditional PARTIAL/PARTIAL for matched token budgets and training recipe; numerical analysis complete, software checks pass, preregistered statistical controls fail | ub9sc; initial Claude Code, Opus 5.5; completion Codex CLI, GPT-6 Astra ultra (Vals); Python CPU on skampere1 |
 | `15_e4_porian_lrt_both_counts` | E4: [CONVENTION-DEPENDENT](15_e4_porian_lrt_both_counts/results.md), 26/114 bootstrap detections across 38 Porian conventions and three counts; 1,000 refits/test; verification passes | ub9sc; initial Claude Code, Opus 5.5; completion Codex CLI, GPT-6 Astra ultra (Vals); Python CPU on skampere1 |
 | `16_two_term_lrt_calibration_chinchilla_backtest_porian_n_count_start_25Nov2026_end_26Nov2026` | CPU tests of the two-term conjecture: [no evidence for or against a second N term; the repo's `lr_test` cannot reject](16_two_term_lrt_calibration_chinchilla_backtest_porian_n_count_start_25Nov2026_end_26Nov2026/results.md); calibration and power of the test on simulated ladders, extra-term backtests on the Chinchilla points with and without the runs under one token per parameter, real fixed-data ladders, and Porian parameter-count definitions | Claude Code, Claude Sonnet 5.5; Python CPU, no cluster |
+| `17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026` | Port of the DM-1b bootstrap likelihood-ratio test into `lr_test` and a loud `fit_two_term_N_only`: [all five criteria pass, and post hoc the test over-rejects under wide-range multiplicative noise](17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/results.md); 220 of 220 committed DM-1b rows reproduced exactly, 33 of 600 additive-noise null ladders rejected, strong second term found in 40 of 40 | Claude Code, Claude Sonnet 5.5; Python CPU, no cluster |
 
 `RESULTS.md` summarizes the numbered CPU experiments. The early numbered CPU experiments record their procedure in each README without a preregistration committed before the fits. E2 and E4 have separate preregistrations committed and pushed before their first fits.

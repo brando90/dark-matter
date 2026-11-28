@@ -1,0 +1,61 @@
+{
+  "rel_sd": 0.005,
+  "cells": {
+    "mult_null_1e5_1e9_4pd": {
+      "n": 200,
+      "detections": 35,
+      "rate": 0.175,
+      "exact_95ci": [
+        0.125,
+        0.2349
+      ],
+      "npts": 17,
+      "loss_range": [
+        2.02,
+        9.94
+      ]
+    },
+    "mult_null_1e6_1e9_4pd": {
+      "n": 200,
+      "detections": 24,
+      "rate": 0.12,
+      "exact_95ci": [
+        0.0784,
+        0.1733
+      ],
+      "npts": 13,
+      "loss_range": [
+        2.02,
+        5.49
+      ]
+    },
+    "mult_null_1e7_1e9_4pd": {
+      "n": 200,
+      "detections": 10,
+      "rate": 0.05,
+      "exact_95ci": [
+        0.0242,
+        0.09
+      ],
+      "npts": 9,
+      "loss_range": [
+        2.01,
+        3.43
+      ]
+    }
+  },
+  "pooled": {
+    "n": 600,
+    "detections": 69,
+    "rate": 0.115,
+    "exact_95ci": [
+      0.0906,
+      0.1433
+    ]
+  },
+  "seconds": 42.5,
+  "numpy": "2.5.3",
+  "python": "3.13.18",
+  "seed": 20261127,
+  "label": "post hoc, not preregistered"
+}

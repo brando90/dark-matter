@@ -1,0 +1,16 @@
+1. Source identity: the fitter block in py_src/two_term_lrt.py is identical to dm1b.py's block after three renames (187 lines compared).
+2. Row parity on committed DM-1b rows: 220 of 220 sampled rows reproduce k_exceed, refits used, the decision, T and p; mismatches: k 0, refits used 0, decision 0, T 0, p 0; largest relative difference in T 1.8e-16; detections 118 against 118; rows with a non-finite bootstrap statistic 0; rows from ladders of more than 17 points 20.
+3. Null cell null_1e5_1e9_4pd_sd0.01 (17 points): 6 of 200 ladders rejected, rate 0.03, exact 95% interval 0.0111 to 0.0642.
+4. Null cell null_1e6_1e9_4pd_sd0.01 (13 points): 10 of 200 ladders rejected, rate 0.05, exact 95% interval 0.0242 to 0.09.
+5. Null cell null_1e7_1e9_4pd_sd0.02 (9 points): 17 of 200 ladders rejected, rate 0.085, exact 95% interval 0.0503 to 0.1326.
+6. Pooled null rejection: 33 of 600 ladders, rate 0.055, exact 95% interval 0.0382 to 0.0764; worst cell 0.085; gates 0.07 pooled and 0.1 per cell; DM-1b measured 0.049 pooled and 0.070 worst cell.
+7. Power, positive control (33 points, second term of relative size 1): 40 of 40 ladders detected, exact 95% interval 0.9119 to 1.0, median T 278.9; gate at least 36.
+8. Power, weak cell (9 points, second term of relative size 0.1): 2 of 40 ladders detected, rate 0.05, exact 95% interval 0.0061 to 0.1692; DM-1b's power for this design is 0.05.
+9. Criteria: 1 pass, 2 pass, 3 pass, 4 pass.
+10. Fail-loud tests (pytest on test_fail_loud.py): 17 passed in 4.45s.
+11. Run time: 680 fresh ladders took on average 0.14 seconds each; the 220 parity rows took 62.3 seconds in all.
+12. Environment: Python 3.13.18, numpy 2.5.3, two CPU cores; the repository pins Python 3.11.
+13. Post hoc multiplicative noise, cell mult_null_1e5_1e9_4pd (17 points, loss 2.02 to 9.94): 35 of 200 one-term ladders rejected, rate 0.175, exact 95% interval 0.125 to 0.2349.
+14. Post hoc multiplicative noise, cell mult_null_1e6_1e9_4pd (13 points, loss 2.02 to 5.49): 24 of 200 one-term ladders rejected, rate 0.12, exact 95% interval 0.0784 to 0.1733.
+15. Post hoc multiplicative noise, cell mult_null_1e7_1e9_4pd (9 points, loss 2.01 to 3.43): 10 of 200 one-term ladders rejected, rate 0.05, exact 95% interval 0.0242 to 0.09.
+16. Post hoc multiplicative noise, pooled: 69 of 600 ladders rejected, rate 0.115, exact 95% interval 0.0906 to 0.1433; relative noise sd 0.005; not preregistered.

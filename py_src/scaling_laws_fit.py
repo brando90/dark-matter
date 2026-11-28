@@ -183,7 +183,8 @@ def lr_test(N, L, *args, **kwargs) -> LRTResult:
     A parametric bootstrap of T = npts * ln(RSS_1 / RSS_2) (Gaussian noise on L), implemented in
     py_src/two_term_lrt.py as a verbatim port of experiments/dm1_power_analysis/dm1b.py; pooled null rejection 0.049
     at level 0.05 (DM-1b, 12,000 null ladders). It needs at least 7 points and raises InsufficientDataError below
-    that. In the result, two_term.alpha is the FAST exponent and two_term.beta the slow one.
+    that. In the result, two_term.alpha is the FAST exponent and two_term.beta the slow one. It assumes additive,
+    constant-sd Gaussian noise on L; with multiplicative noise and a wide loss range it over-rejects (folder 17).
 
     This replaced the chi-square test on the Huber objective, which was not calibrated (folder 16: its statistic sat
     4e4 to 9e4 times below the 5.99 cutoff on Chinchilla, so it could never reject). Calling the old form,

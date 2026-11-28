@@ -1,0 +1,102 @@
+{
+  "cells": {
+    "null_1e5_1e9_4pd_sd0.01": {
+      "role": "null",
+      "n": 200,
+      "detections": 6,
+      "rate": 0.03,
+      "exact_95ci": [
+        0.0111,
+        0.0642
+      ],
+      "npts": 17,
+      "median_T": 0.09223595663118454,
+      "nonfinite_boot_ladders": 0,
+      "mean_seconds": 0.119
+    },
+    "null_1e6_1e9_4pd_sd0.01": {
+      "role": "null",
+      "n": 200,
+      "detections": 10,
+      "rate": 0.05,
+      "exact_95ci": [
+        0.0242,
+        0.09
+      ],
+      "npts": 13,
+      "median_T": 0.11765785883840661,
+      "nonfinite_boot_ladders": 0,
+      "mean_seconds": 0.124
+    },
+    "null_1e7_1e9_4pd_sd0.02": {
+      "role": "null",
+      "n": 200,
+      "detections": 17,
+      "rate": 0.085,
+      "exact_95ci": [
+        0.0503,
+        0.1326
+      ],
+      "npts": 9,
+      "median_T": 0.1197463150567947,
+      "nonfinite_boot_ladders": 0,
+      "mean_seconds": 0.097
+    },
+    "power_control_1e5_1e9_8pd_sd0.005_s1": {
+      "role": "power",
+      "n": 40,
+      "detections": 40,
+      "rate": 1.0,
+      "exact_95ci": [
+        0.9119,
+        1.0
+      ],
+      "npts": 33,
+      "median_T": 278.88099660394596,
+      "nonfinite_boot_ladders": 0,
+      "mean_seconds": 0.639
+    },
+    "power_weak_1e7_1e9_4pd_sd0.01_s0.1": {
+      "role": "weak",
+      "n": 40,
+      "detections": 2,
+      "rate": 0.05,
+      "exact_95ci": [
+        0.0061,
+        0.1692
+      ],
+      "npts": 9,
+      "median_T": 0.13411153959920746,
+      "nonfinite_boot_ladders": 0,
+      "mean_seconds": 0.103
+    }
+  },
+  "null_pooled": {
+    "n": 600,
+    "detections": 33,
+    "rate": 0.055,
+    "exact_95ci": [
+      0.0382,
+      0.0764
+    ]
+  },
+  "null_worst_cell_rate": 0.085,
+  "power_control": {
+    "n": 40,
+    "detections": 40,
+    "exact_95ci": [
+      0.9119,
+      1.0
+    ]
+  },
+  "gates": {
+    "pooled_max": 0.07,
+    "cell_max": 0.1,
+    "power_min_detections": 36
+  },
+  "criterion_3_pass": true,
+  "criterion_4_pass": true,
+  "numpy": "2.5.3",
+  "python": "3.13.18",
+  "seed": 20261127
+}
