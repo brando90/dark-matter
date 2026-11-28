@@ -1,0 +1,4 @@
+experiment,rows,n,max_abs_diff_between_arms
+02,gpt3_val and pythia_lambada rows,24,0.0
+09,all rows other than chinchilla_runs,19,0.0
+03,all curves other than chinchilla_all_runs,4,0.0

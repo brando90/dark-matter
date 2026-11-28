@@ -1,0 +1,66 @@
+{
+  "flops_equals_6ND_max_rel_dev": 4.440892098500626e-16,
+  "n_rows": 245,
+  "n_columns": 21,
+  "gap_dex": 0.05,
+  "n_columns_with_8_or_more_runs": 8,
+  "runs_in_those_columns": 220,
+  "D_min": 244947372.54190576,
+  "D_max": 317549575329.3697,
+  "n_D_below_5e9": 37,
+  "n_D_below_5e9_and_ratio_ge_1": 27,
+  "n_short_D_below_5e9": 10,
+  "short_D_min": 244947372.54190576,
+  "short_D_max": 8063971258.17697,
+  "five_lowest_ratios": [
+    0.036,
+    0.1732,
+    0.2332,
+    0.3085,
+    0.4031
+  ],
+  "five_lowest_N": [
+    6800000000.0,
+    2980000000.0,
+    2640000000.0,
+    2280000000.0,
+    2010000000.0
+  ],
+  "five_lowest_loss": [
+    5.006,
+    4.665,
+    3.766,
+    3.794,
+    3.447
+  ],
+  "five_lowest_all_in_1e19_column": true,
+  "max_loss_over_neighbour_median_of_five": 1.6855933948946644,
+  "short_ratio_max": 0.9702755982038123,
+  "prediction_6": {
+    "short_runs": 11,
+    "in_1e19_column": 10,
+    "in_1e19_column_are_its_largest_N": true,
+    "1e19_column_runs": 32,
+    "1e19_column_C_range": [
+      7.99750935882534e+18,
+      1.1541294052708788e+19
+    ],
+    "1e19_column_N_range_of_short": [
+      1270000000.0,
+      6800000000.0
+    ],
+    "others": [
+      {
+        "N": 12570000000.0,
+        "C": 6.081847122917071e+20,
+        "ratio": 0.6415251597595043,
+        "column_C_range": [
+          5.445776352120002e+20,
+          6.572364015198353e+20
+        ],
+        "N_rank_in_column": 1
+      }
+    ],
+    "passed": true
+  }
+}

@@ -1,0 +1,13 @@
+exp,arm,protocol,base,extra,gain_pooled,gain_macro
+02,all245,size,joint,joint_extra_n,-0.00016926085426982596,-0.0010491544867334834
+02,all245,size,compute_one,compute_two,-5.291126405904123e-07,-2.9391732689898475e-06
+02,all245,compute,joint,joint_extra_n,4.3184478992763786e-05,2.3995092454320854e-05
+02,all245,compute,compute_one,compute_two,-6.273604046191927e-05,-4.287002298930531e-06
+02,drop_DN_lt_1,size,joint,joint_extra_n,-0.08892166807317592,-0.09178184439529913
+02,drop_DN_lt_1,size,compute_one,compute_two,-0.014332353066382364,-0.020878903823467132
+02,drop_DN_lt_1,compute,joint,joint_extra_n,-0.0003812789020849472,-0.00046661836992978323
+02,drop_DN_lt_1,compute,compute_one,compute_two,1.2959488848607315e-05,-1.6892693154524352e-05
+09,all245,size,joint,joint_extra_n,-0.00016926085426982596,
+09,all245,size,joint,joint_extra_d,-3.516164697581203e-05,
+09,drop_DN_lt_1,size,joint,joint_extra_n,-0.08892166807317592,
+09,drop_DN_lt_1,size,joint,joint_extra_d,-5.4483377669667377e-05,

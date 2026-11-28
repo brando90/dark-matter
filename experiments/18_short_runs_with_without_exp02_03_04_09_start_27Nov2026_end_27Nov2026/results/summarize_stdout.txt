@@ -1,0 +1,72 @@
+{
+  "1": {
+    "rmse_02_all": 0.2501034251879001,
+    "rmse_02_drop": 0.0273130889850901,
+    "reduction_02": 0.8907928231507822,
+    "rmse_09_all": 0.2501034251879001,
+    "rmse_09_drop": 0.0273130889850901,
+    "reduction_09": 0.8907928231507822,
+    "macro_02_all": 0.1265081127398377,
+    "macro_02_drop": 0.0307180048282762,
+    "macro_reduction_02": 0.7571854945662861,
+    "passed": true
+  },
+  "2": {
+    "max_gain_any_case": 4.3184478992763786e-05,
+    "n_cases": 12,
+    "n_cases_with_positive_gain": 2,
+    "worst_loss_vs_base_size_02_drop": 0.08892166807317592,
+    "passed": true
+  },
+  "3": {
+    "quad_r2_logD_all": 0.3203185235766751,
+    "quad_r2_logD_drop": 0.0038106975894262,
+    "spearman_logN_drop": -0.0170692445143914,
+    "spearman_logD_drop": 0.0460442671199679,
+    "residual_rmse_all": 0.0961376094612598,
+    "residual_rmse_drop": 0.0143787786583838,
+    "n_abs_gt_0.2_all": 4,
+    "n_abs_gt_0.2_drop": 0,
+    "passed": true
+  },
+  "4": {
+    "gamma_all": 0.4557477114830639,
+    "gamma_drop": 0.3391717904651234,
+    "fall": 0.11657592101794051,
+    "published_gamma": 0.36,
+    "moves_toward_published": true,
+    "distance_to_published_drop": -0.020828209534876574,
+    "passed": true
+  },
+  "5": {
+    "max_rel_diff_chinchilla_rows": 0.0003439427538053267,
+    "max_rel_diff_all_rows": 0.02766682698741328,
+    "threshold": 1e-06,
+    "passed": false
+  }
+}
+  experiment                                            what  max_rel_diff                                              worst_at  rows
+0         02                      Chinchilla-run rows, RMSEs      0.000344  test_macro_rmse @ chinchilla_runs/size/joint_extra_n    12
+1         02                                 all rows, RMSEs      0.006172   test_macro_rmse @ pythia_lambada/size/joint_extra_n    36
+2         09          Chinchilla-run rows, RMSEs and AIC/BIC      0.000056       test_rmse @ chinchilla_runs/joint/joint_extra_n     3
+3         09                     all rows, RMSEs and AIC/BIC      0.027667       test_rmse @ pythia_pile_val/n_only/broken_power    22
+4         03  Chinchilla joint rows, quad R2, RMSE, Spearman      0.000134                                       quad_r2 @ joint     3
+5         04         best-fit rows: objective and parameters      0.000362                    A @ optimized_from_published_start     3
+6         04      Huber-delta sweep: objective, gamma, alpha      0.001558                                        alpha @ 0.0001     5
+  experiment                                       rows   n  max_abs_diff_between_arms
+0         02           gpt3_val and pythia_lambada rows  24                        0.0
+1         09        all rows other than chinchilla_runs  19                        0.0
+2         03  all curves other than chinchilla_all_runs   4                        0.0
+   protocol          model  n_test_all  n_test_kept  same_test_rows_as_drop_arm  rmse_all245_model_on_all_test  rmse_all245_model_on_kept_test  rmse_drop_model_on_kept_test
+0   compute    compute_one          49           48                       False                       0.038702                        0.030689                      0.030547
+1   compute    compute_two          49           48                       False                       0.038704                        0.030691                      0.030546
+2   compute         d_only          49           48                       False                       0.172441                        0.171602                      0.167913
+3   compute          joint          49           48                       False                       0.037355                        0.035983                      0.023373
+4   compute  joint_extra_n          49           48                       False                       0.037353                        0.035981                      0.023382
+5   compute         n_only          49           48                       False                       0.169113                        0.169171                      0.155225
+6      size    compute_one          42           38                        True                       0.434130                        0.040412                      0.040066
+7      size    compute_two          42           38                        True                       0.434130                        0.040412                      0.040640
+8      size         d_only          42           38                        True                       0.291884                        0.164228                      0.165238
+9      size          joint          42           38                        True                       0.250103                        0.030269                      0.027313
+10     size  joint_extra_n          42           38                        True                       0.250146                        0.030369                      0.029742
+11     size         n_only          42           38                        True                       0.613097                        0.136451                      0.151815

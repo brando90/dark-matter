@@ -70,6 +70,7 @@ Put reusable fitting, data, and plotting utilities in `py_src/`; keep experiment
 
 - This repository was migrated from `stair-lab/dark-matter2` into `dark-matter`. Legacy files (`main_fit_scalings_laws.sh`, `00_get_resolving_discrepencies_in_scaling_laws_data.py`, `dark-matter2.code-workspace`, `README.md`) still reference `$HOME/dark-matter2` and `$HOME/uv_envs/dark-matter2`. In **new** scripts, resolve paths relative to `Path(__file__).resolve()` / repo root instead of hardcoding `$HOME/dark-matter2`.
 - `pyproject.toml` lists `[tool.hatch.build.targets.wheel] packages = ["py_src/dark_matter2"]`, while modules currently live directly in `py_src/`. Experiment scripts add `REPO_ROOT` to `sys.path` and import `from py_src...`.
+- `data/data_hitchhikers_guide/colpret_chinchilla.csv.gz` (245 rows) is a reconstruction of Hoffmann et al.'s Figure 4, not training logs; tokens are FLOPs / (6 N). The 11 rows with D/N below 1 move the fitted token exponent from about 0.34 to 0.46 (experiment 18); report results with and without them.
 - `py_src/chinchilla_verification.py` derives `N_params = width * depth` for resolving-discrepancies CSVs—this is a rough proxy, not an exact transformer parameter count. Verify/update before interpreting absolute `A` or `D/N` values from that schema.
 - `experiments/00_prepare_data_for_scaling_law_fitting/README.md` still references the older script name `main_chinchilla_verification.py` (current script is `main_fit_scalings_laws.py`).
 

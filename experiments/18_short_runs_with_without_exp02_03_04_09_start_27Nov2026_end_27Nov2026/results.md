@@ -1,0 +1,103 @@
+# Experiments 02, 03, 04 and 09 with and without the 11 Chinchilla runs under one token per parameter (11-27-2026)
+
+**Doc link:** <https://github.com/brando90/dark-matter/blob/main/experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026_end_27Nov2026/results.md>
+
+**TLDR:** The 11 Chinchilla runs with fewer than one token per parameter, and above all the five with the lowest ratios, carry the token-exponent result, the residual structure and the held-out error of the joint fits in experiments 02, 03, 04 and 09; removing them moves the token exponent from 0.455748 to 0.339172, close to the published 0.36, and removing 200 random sets of 11 runs never does. Five of the six preregistered predictions passed and one failed: this environment does not reproduce the committed numbers to 1e-6.
+
+Date: 11-27-2026. Owner: Claude Code, Claude Sonnet 5.5, Python CPU, no cluster. Folder created from preregistration commit 67839d7, before any arm was run.
+
+## Bottom line
+
+Verdict: **THE 11 SHORT RUNS DRIVE THE CHINCHILLA RESULTS OF EXPERIMENTS 02, 03, 04 AND 09; EXTRA TERMS STILL DO NOT HELP IN EITHER ARM; THE HARNESS CHECK AT 1E-6 FAILED.** Without the 11 runs the joint fit's residual RMSE falls from 0.096138 to 0.014379, the quadratic structure of the residuals against log D disappears (R-squared 0.320319 to 0.003811), the token exponent falls from 0.455748 to 0.339172 and no longer depends on the Huber delta, and the size-holdout RMSE falls from 0.250103 to 0.027313. Most of that last fall is a change of test set: the four short runs that sit in the size holdout leave it, and the all-runs model scores 0.030269 on the 38 test runs that remain. The same pattern appears when the five lowest ratios are removed one by one, and it is not produced by removing random runs. The runs are the same ones a published replication flags as unexplained high-loss outliers; details in [provenance.md](provenance.md).
+
+## Preregistered predictions
+
+| # | Prediction | Result | Verdict | Items |
+|---|---|---|---|---|
+| 1 | Joint held-out RMSE, size holdout, falls by at least half in experiments 02 and 09 | 0.250103 to 0.027313 in both, a fall of 89.1%; macro RMSE 0.126508 to 0.030718, 75.7% | PASSED | 13 |
+| 2 | No extra-term model beats its base by more than 2% | Largest gain 0.0043% over 12 comparisons; without the 11 runs joint_extra_n is 8.9% worse than joint | PASSED | 20, 21 |
+| 3 | Experiment 03: quadratic R-squared against log D below 0.10 without the 11; Spearman correlations below 0.2 | 0.320319 to 0.003811; Spearman with log N -0.017069, with log D 0.046044 | PASSED | 25 |
+| 4 | Experiment 04: token exponent falls by at least 0.03 toward 0.36 | 0.455748 to 0.339172, a fall of 0.116576; 0.0208 below the published value | PASSED | 27 |
+| 5 | Arm all245 reproduces the committed key numbers to 1e-6 | Largest relative difference 3.4e-04 on Chinchilla-run rows and 2.8e-02 over all rows | FAILED | 9 |
+| 6 | Ten of the 11 sit at the large-N end of the column near 1e19 FLOP, the eleventh is the 12.57 billion parameter run of the 6e20 column | Exactly that: the 10 largest of 32 runs, and the largest of its column | PASSED (written after a data-only look, so a check of that look, not a blind prediction) | 36 |
+
+## Size holdout of experiments 02 and 09 (post hoc decomposition)
+
+Pooled held-out RMSE in loss units. The size holdout takes the largest model sizes as test; 4 of the 11 short runs are in it and 7 are in training. The three columns separate the effect of changing the test set from the effect of retraining.
+
+| Model | All-runs model, all 42 test runs | All-runs model, the 38 test runs that survive | Model retrained without the 11, same 38 runs | Items |
+|---|---|---|---|---|
+| joint | 0.250103 | 0.030269 | 0.027313 | 14 |
+| joint_extra_n | 0.250146 | 0.030369 | 0.029742 | 15 |
+| compute_one | 0.434130 | 0.040412 | 0.040066 | 16 |
+| compute_two | 0.434130 | 0.040412 | 0.040640 | 17 |
+| n_only | 0.613097 | 0.136451 | 0.151815 | 18 |
+| d_only | 0.291884 | 0.164228 | 0.165238 | 19 |
+
+Of the fall in the joint model's size-holdout RMSE from 0.250103 to 0.027313, the fall to 0.030269 comes from the four short runs leaving the test set; retraining without the seven short training runs adds the rest. The N-only model gets worse when retrained (0.136451 to 0.151815). The compute holdout, whose split moves when runs are removed, is in `results/with_without_02.csv` and is not decomposed.
+
+## Experiments 03 and 04: in-sample structure and stability of the joint fit
+
+| Quantity | All 245 runs | Without the 11 | Items |
+|---|---|---|---|
+| Experiment 03, joint residual RMSE; residuals above 0.2 in absolute value | 0.096138; 4 | 0.014379; 0 | 26 |
+| Experiment 03, quadratic R-squared of residuals against log D | 0.320319 | 0.003811 | 25 |
+| Experiment 04 best joint fit: E, alpha, gamma | 1.896751, 0.352913, 0.455748 | 1.789751, 0.349919, 0.339172 | 28 |
+| Experiment 04 best joint fit: A, G, Huber objective | 529.26, 13577.0, 0.001828 | 501.72, 1198.8, 0.000837 | 28 |
+| Experiment 04 objective at the published point | 0.011896 | 0.011123 | 29 |
+| Experiment 04 bootstrap of gamma: median, 10th to 90th percentile | 0.467, 0.389 to 0.512 | 0.349, 0.312 to 0.369 | 30 |
+| Experiment 04 range of gamma over Huber delta 1e-4 to 10 | 0.158 | 0.008 | 31 |
+| Experiment 04 multistart fits within 1% of the best | 24 of 24 | 23 of 24 | 31 |
+
+## Experiment 09: extra terms
+
+| Model | Held-out RMSE, all runs | Held-out RMSE, without the 11 | Collapsed to a single term | Items |
+|---|---|---|---|---|
+| joint | 0.250103 | 0.027313 | False and False | 22 |
+| joint_extra_n | 0.250146 | 0.029742 | False and False | 23 |
+| joint_extra_d | 0.250112 | 0.027315 | True and True | 24 |
+
+The pseudo-AIC and pseudo-BIC in experiment 09 add the Huber objective, about 0.001, to the parameter penalty, so they cannot favour an extra term in either arm; see the rows of items 22 to 24.
+
+## Controls (post hoc, not preregistered)
+
+| Control | Result | Items |
+|---|---|---|
+| 200 random removals of 11 of the 245 runs: gamma minimum, median, maximum | 0.391, 0.458, 0.482; 0 draws reach 0.339 | 32 |
+| The same random removals, Huber objective: minimum, median, maximum | 0.001467, 0.001768, 0.001808 against 0.000837 without the 11 short runs | 33 |
+| Removing the 11 highest ratios, 11 smallest N, 11 largest N: gamma | 0.447, 0.458, 0.420 | 34 |
+| Dose-response: gamma after removing the k lowest-ratio runs, k = 0, 1, 2, 3, 4, 5 | 0.4557, 0.4126, 0.3974, 0.3787, 0.3706, 0.3669, falling at every step | 40 |
+| k = 5, the 240 runs left after the five lowest ratios: E, alpha, G, gamma | 1.8222, 0.3519, 2130.8, 0.3669 | 41 |
+
+The 200 random removals took out 0, 1, 2 or 3 of the 11 short runs in 124, 56, 18 and 2 draws (item 35). The k = 5 fit sits within about 0.3% of the E and gamma that Besiroglu et al. report for their 240-point fit, which also supports the fitting code; their numbers come from a summarising page fetch and should be checked against the paper before they are quoted.
+
+## Harness check and arm invariance
+
+| Check | Result | Items |
+|---|---|---|
+| Experiment 02, Chinchilla-run rows against the committed outputs | Largest relative difference 3.4e-04 | 2 |
+| Experiment 09, Chinchilla-run rows | 5.6e-05 | 4 |
+| Experiment 03, Chinchilla joint rows | 1.3e-04 | 6 |
+| Experiment 04, best-fit rows; Huber-delta sweep | 3.6e-04; 1.6e-03 | 7, 8 |
+| Experiments 02 and 09, all rows | 6.2e-03 and 2.8e-02 (a non-convex broken-power fit on the Pythia ladder) | 3, 5 |
+| Rows that cannot depend on the short runs, experiments 02, 09 and 03 | 24, 19 and 4 rows identical between arms | 10, 11, 12 |
+
+## Provenance of the short runs, in brief
+
+The 245 rows are not training logs. In every row FLOPs equal 6 N D to 4.4e-16, so tokens are derived from FLOPs and N (item 38); the rows were reconstructed from a scatter plot of the Hoffmann et al. paper by Besiroglu et al., who drop five high-loss runs near 1e19 FLOP as unexplained outliers. Our five lowest ratios, 0.036, 0.1732, 0.2332, 0.3085 and 0.4031, are all in that column and have losses up to 1.686 times those of neighbouring runs (item 37). Whether any of the runs was really trained that way cannot be checked from public data. Full account and sources: [provenance.md](provenance.md).
+
+## Caveats
+
+1. The harness check at 1e-6 failed (prediction 5). This sandbox runs Python 3.13.18, numpy 2.5.3 and scipy 1.18.1, not the repository's pinned Python 3.11, and the environment of the committed outputs is unknown. Base-model rows agree to about 1e-4 or better, extra-term and non-convex fits differ more. Both arms were run here, in one environment, so the with-and-without comparison is internally consistent; the committed outputs were not overwritten.
+2. Test-set composition: the size-holdout fall in prediction 1 is mostly a change of test set, as the decomposition shows.
+3. Experiment 04's two-term bootstrap on the matched ladder shares one random generator with the joint bootstrap, so its resamples differ between arms by construction; it is not compared.
+4. The threshold D/N below 1 is the folder 16 definition, chosen before this folder; the dose-response control and the published replication point to the five lowest ratios as the main driver, and the control that removes random runs was added after seeing the results.
+5. Every result concerns the 245 figure-reconstructed rows, not original run data.
+
+## What would move this next
+
+Refit the Chinchilla law with the five or eleven runs treated as censored or downweighted rather than deleted, and re-ask the extra-term question on the 234 or 240 runs with a calibrated test: the bootstrap likelihood-ratio test of folder 17 handles N-only ladders but not the joint law. Fetch the extracted data from the Besiroglu et al. repository, if reachable, and compare its rows with the ColPret file row by row.
+
+## Rerun
+
+`python3 experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026_end_27Nov2026/run_all.py --workers 2`, then `summarize.py`, `trace_short_runs.py`, `control_random_drop.py`, `control_dose_response.py`, `python3 -I report_numbers.py > results/report_numbers.txt` and `python3 -I check_results_md.py`. The eight arms take about two minutes on two cores, the random-removal control about nine minutes.

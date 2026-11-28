@@ -1,0 +1,45 @@
+{
+  "n_draws": 200,
+  "seed": 20261127,
+  "gamma_all245": 0.4557477114830639,
+  "gamma_drop_DN_lt_1": 0.33917179046512347,
+  "random_gamma_min": 0.39062219727414604,
+  "random_gamma_p10": 0.44428857294747925,
+  "random_gamma_median": 0.45795758801536257,
+  "random_gamma_p90": 0.47196364513795136,
+  "random_gamma_max": 0.48245327842551167,
+  "random_draws_gamma_below_0.40": 1,
+  "random_draws_gamma_at_or_below_drop_DN_lt_1": 0,
+  "random_objective_min": 0.0014672523883285469,
+  "random_objective_median": 0.0017682873832003565,
+  "random_objective_max": 0.0018083876707057256,
+  "objective_all245": 0.0018278906449732137,
+  "objective_drop_DN_lt_1": 0.0008371241986226163,
+  "random_draws_failed": 0,
+  "random_draws_removing_k_short_runs": {
+    "0.0": 124,
+    "1.0": 56,
+    "2.0": 18,
+    "3.0": 2
+  },
+  "structured": {
+    "drop_11_highest_DN": {
+      "gamma": 0.44660531620763955,
+      "objective": 0.0017684053594678153,
+      "alpha": 0.34985562909606377,
+      "E": 1.887213020358598
+    },
+    "drop_11_smallest_N": {
+      "gamma": 0.4582241428065479,
+      "objective": 0.0017763263720462297,
+      "alpha": 0.36781350331485235,
+      "E": 1.9131854959246979
+    },
+    "drop_11_largest_N": {
+      "gamma": 0.41978964212349773,
+      "objective": 0.0014675241694442596,
+      "alpha": 0.3175076625480744,
+      "E": 1.8184795180199884
+    }
+  }
+}

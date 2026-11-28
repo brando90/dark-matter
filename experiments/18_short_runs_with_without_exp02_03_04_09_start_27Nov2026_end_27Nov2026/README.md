@@ -1,8 +1,8 @@
 # Do experiments 02, 03, 04 and 09 survive without the eleven Chinchilla runs under one token per parameter, and where do those runs come from? (11-27-2026)
 
-**Doc link:** <https://github.com/brando90/dark-matter/blob/main/experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026/README.md>
+**Doc link:** <https://github.com/brando90/dark-matter/blob/main/experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026_end_27Nov2026/README.md>
 
-**TLDR:** Folder 16 found that a few very short Chinchilla runs drive the held-out error and the token-exponent results of the Chinchilla fits. This folder re-runs experiments 02, 03, 04 and 09 unchanged, once on all 245 runs and once without the 11 runs under one token per parameter, and traces where those runs come from. Status: PREREGISTERED on 11-27-2026, before any of the re-runs. Results: pending.
+**TLDR:** Folder 16 found that a few very short Chinchilla runs drive the held-out error and the token-exponent results of the Chinchilla fits. This folder re-runs experiments 02, 03, 04 and 09 unchanged, once on all 245 runs and once without the 11 runs under one token per parameter, and traces where those runs come from. Status: DONE on 11-27-2026. Five of six preregistered predictions passed, one failed (the harness check at 1e-6). See [results.md](results.md) and [provenance.md](provenance.md).
 
 Date: 11-27-2026. Owner: Claude Code, Claude Sonnet 5.5, CPU only.
 
@@ -32,20 +32,31 @@ Written on 11-27-2026 after reading the committed outputs of the all-runs arm an
 
 ## Result
 
-Pending.
+The verdict, numbers and caveats are in [results.md](results.md); the provenance trace of the 11 runs is in [provenance.md](provenance.md). In brief:
+
+1. Prediction 1 PASSED: the joint model's size-holdout RMSE falls from 0.250103 to 0.027313 in experiments 02 and 09, but most of that fall is the four short test runs leaving the test set (0.030269 for the all-runs model on the 38 surviving runs).
+2. Prediction 2 PASSED: no extra-term model beats its base model by more than 0.0043% in either arm; without the 11 runs joint_extra_n is 8.9% worse than joint.
+3. Prediction 3 PASSED: the quadratic R-squared of the joint residuals against log D falls from 0.320319 to 0.003811.
+4. Prediction 4 PASSED: the token exponent falls from 0.455748 to 0.339172; the published value is 0.36. A post hoc control of 200 random removals of 11 runs never gets below 0.391, and removing the k lowest-ratio runs one at a time lowers it at every step from k = 0 to k = 5.
+5. Prediction 5 FAILED: arm all245 differs from the committed outputs by up to 3.4e-04 on Chinchilla-run rows (2.8e-02 over all rows); this sandbox runs Python 3.13, not the pinned 3.11. The with-and-without comparison is within one environment.
+6. Prediction 6 PASSED, but it was written after a data-only look at the same rows.
 
 ## Files
 
 1. `run_arm.py` and `run_all.py`: the wrapper and the driver that runs the eight arms on two workers.
 2. `summarize.py`, `report_numbers.py`, `check_results_md.py`: tables, the numbers file and its provenance check.
-3. `trace_short_runs.py`: the provenance trace.
-4. `outputs/<experiment>/<arm>/`: the unchanged scripts' own CSV outputs for each arm.
+3. `trace_short_runs.py` and [provenance.md](provenance.md): the provenance trace and its account of the published sources.
+4. `control_random_drop.py` and `control_dose_response.py`: post hoc controls (200 random removals of 11 runs; removing the k lowest-ratio runs).
+5. `outputs/<experiment>/<arm>/`: the unchanged scripts' own CSV outputs for each arm; `results/`: the tables, numbers and logs; [results.md](results.md): verdict.
 
 ## Rerun
 
 ```bash
 source "$HOME/uv_envs/dark-matter2/bin/activate"
-python experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026/run_all.py --workers 2
-python experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026/summarize.py
-python experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026/trace_short_runs.py
+python experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026_end_27Nov2026/run_all.py --workers 2
+python experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026_end_27Nov2026/summarize.py
+python experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026_end_27Nov2026/trace_short_runs.py
+python experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026_end_27Nov2026/control_random_drop.py
+python experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026_end_27Nov2026/control_dose_response.py
 ```
+Run logs in results/logs record the folder name from before the rename (the folder gained _end_27Nov2026 when results.md was written).
