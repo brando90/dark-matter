@@ -103,7 +103,7 @@ pytest on test\_fail\_loud.py & 17 passed in 4.45s & 10 \\
 \begin{enumerate}
   \item Library: \texttt{py\_\allowbreak{}src/\allowbreak{}two\_\allowbreak{}term\_\allowbreak{}lrt.py} (new; DM-1b's fitter block plus \texttt{bootstrap\_\allowbreak{}lr\_\allowbreak{}test}, \texttt{fit\_\allowbreak{}one\_\allowbreak{}and\_\allowbreak{}two\_\allowbreak{}term}, the dataclasses and the error classes) and \texttt{py\_\allowbreak{}src/\allowbreak{}scaling\_\allowbreak{}laws\_\allowbreak{}fit.py} (\texttt{lr\_\allowbreak{}test} wrapper, \texttt{lr\_\allowbreak{}test\_\allowbreak{}chi2\_\allowbreak{}uncalibrated} kept with a warning, \texttt{fit\_\allowbreak{}two\_\allowbreak{}term\_\allowbreak{}N\_\allowbreak{}only} validation and convergence record, repaired smoke test).
   \item Scripts: parity\_dm1b.py, calibration\_power.py, posthoc\_multiplicative\_noise.py, test\_fail\_loud.py, report\_numbers.py, check\_results\_md.py. Every extra term is additive: \texttt{E + a n\textasciicircum{}-p + b n\textasciicircum{}-(p+d)} on the loss.
-  \item Harness and model: Claude Code, claude-sonnet-5-5, CPU, two cores. The QA reviewers that read this folder are listed in the Mega QA section of the project report, not here.
+  \item Harness and model: Claude Code, claude-sonnet-5-5, CPU, two cores. The QA reviewers that read this folder, and what they found, are recorded in \texttt{experiments/\allowbreak{}MEGA\_\allowbreak{}QA\_\allowbreak{}11-27-2026.md}; \texttt{check\_\allowbreak{}results\_\allowbreak{}md.py} was tightened after the second pass (it now fails on a malformed citation cell and on an integer that only matches the leading digits of a longer number) and still passes on this folder. No number in this folder changed.
   \item Seeds: data \texttt{[cell, rep, 20261127]}, bootstrap the same with a trailing 1, parity sample 20261127.
   \item Naming: in \texttt{two\_\allowbreak{}term.alpha} and \texttt{two\_\allowbreak{}term.beta}, alpha is the fast exponent (the larger one, matters at small N) and beta the slow one. DM-1b's own fit dictionary names them the other way round.
 \end{enumerate}
@@ -112,4 +112,6 @@ pytest on test\_fail\_loud.py & 17 passed in 4.45s & 10 \\
 \begin{itemize}
   \item results.md: \url{https://github.com/brando90/dark-matter/blob/main/experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/results.md}
   \item commit: \url{https://github.com/brando90/dark-matter/commit/98bbacc}
+  \item commit: \url{https://github.com/brando90/dark-matter/commit/b454b28}
+  \item commit: \url{https://github.com/brando90/dark-matter/commit/006ea3e}
 \end{itemize}

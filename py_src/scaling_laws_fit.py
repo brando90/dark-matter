@@ -187,7 +187,7 @@ def lr_test(N, L, *args, **kwargs) -> LRTResult:
     constant-sd Gaussian noise on L; with multiplicative noise and a wide loss range it over-rejects (folder 17).
 
     This replaced the chi-square test on the Huber objective, which was not calibrated (folder 16: its statistic sat
-    4e4 to 9e4 times below the 5.99 cutoff on Chinchilla, so it could never reject). Calling the old form,
+    4e4 to 9e4 times below the 5.99 cutoff on simulated ten-size ladders, so it could never reject). Calling the old form,
     lr_test(loglike_small, k_small, loglike_big, k_big), raises TypeError.
     """
     if args or np.ndim(N) == 0:

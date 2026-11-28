@@ -65,7 +65,7 @@ Porian's small-end excess on these ladders is known from DM-2, DM-3 and folder 1
 
 ## Files and rerun
 
-`build_designs.py`, `controls.py`, `summarize_controls.py`, `real_data.py` (gated), `test_nested_lrt.py`, library `py_src/nested_joint_lrt.py`.
+`build_designs.py`, `controls.py`, `summarize_controls.py`, `real_data.py` (gated), `test_nested_lrt.py`, `verify_f1_saved_workload.py` (Mega QA check, results in `results/verify_f1_saved_workload.txt`: part 1 probes the start-cell ranking of the code before the 11-27-2026 hardening on every response vector this folder fits; part 2 recomputes 20 of the 200 control replicates and the real owt2 stage with the current code and compares them with the saved numbers exactly), library `py_src/nested_joint_lrt.py`.
 
 ```bash
 python3 -I experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026_end_27Nov2026/test_nested_lrt.py

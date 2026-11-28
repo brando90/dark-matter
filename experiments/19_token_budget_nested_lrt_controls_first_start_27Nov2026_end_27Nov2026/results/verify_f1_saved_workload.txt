@@ -1,0 +1,10 @@
+Part 1: probe of the old code (c49cd63) on the saved workload
+  response vectors ranked (each for M1 and M2): 41702; start cells picked: 208510
+  start cells violating gamma >= alpha + GAP: 0
+  start cells carrying the negative-coefficient penalty: 0; short pick lists: 0
+  fewest feasible cells in any single ranking: 781
+  saved outer fits checked: 201; exponent-constraint violations: 0
+Part 2: regression of the current code against the saved numbers (exact equality)
+  control replicates recomputed: 20 of 200; replicates with any mismatch: 0
+  real owt2 stage recomputed (B=1000 plus the B=500 correlated-noise run); fields differing from real_results.json: none
+seconds 255

@@ -51,10 +51,6 @@ def ctrl(ds):
     return out
 
 
-def g(x, nd=4):
-    return f"{float(x):.{nd}f}"
-
-
 summary = json.loads((R / "controls_summary.json").read_text())
 C = {ds: ctrl(ds) for ds in DS}
 det = {ds: {c: sum(r["detect"].lower() in ("true", "1") for r in rs) for c, rs in C[ds].items()} for ds in DS}

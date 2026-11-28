@@ -53,7 +53,7 @@ Verdict: no evidence for or against a second N term, and the repo's test cannot 
 1. REPORT.md: the full report, with the reproduce commands and the numbered reference list.
 2. results.md: the bottom line, the results tables, caveats and the appendix. check_results_md.py confirms that every number in its tables appears in results/report_numbers.txt.
 3. e1_lrt_calibration.py, e2_chinchilla_joint_backtest.py, e2b_short_run_robustness.py, e3_real_ladders.py, e4_porian_n_proxy.py and crosscheck_exp09.py: the experiments.
-4. validate_scaling_ext.py, test_safe_pickle.py, make_figures.py and report_numbers.py: checks, figures and the numbers file.
+4. validate_scaling_ext.py, test_scaling_ext_golden.py (fit() against a golden file, results/golden_scaling_ext_fit.json), test_scaling_ext_vs_c49cd63.py (fit() against the commit before the 11-27-2026 refactor), test_safe_pickle.py, make_figures.py and report_numbers.py: checks, figures and the numbers file.
 5. results/: the saved CSV, JSON and text outputs and four figures, about one and a half megabytes in total.
 6. py_src/scaling_ext.py and py_src/safe_pickle.py: the two new library modules these scripts import.
 

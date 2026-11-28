@@ -7,13 +7,18 @@
 % result-date is the day this result first lands on main; correct it in this header if the push happens on another day.
 
 \subsection*{Bottom line}
+
 I found no evidence that a second, shallower power law in model size is a real feature of these data, and I cannot rule one out either. The likelihood-ratio test the repo ships never fires: on simulated ten-size ladders its largest statistic sits between about forty-three thousand and ninety-four thousand times below the five percent cutoff, so its p-value of one carries no information. A Gaussian version is roughly calibrated at ten sizes, with false-positive rates of five point three and two point seven percent, but even at ten sizes its power is only sixty percent at zero point three percent noise and eighteen percent at one percent noise (on the seven-size training ladders only its false-positive rate was measured, ten and two point seven percent), and the two-term fit lands on a boundary in about four of ten one-term ladders and half of the two-term ladders. On the Chinchilla points a second data term lowers the fit objective by thirty-seven and a half percent, but its gain in token extrapolation falls from seventy-nine to sixty-six percent when the four shortest runs are dropped and to nineteen percent when all eleven runs under one token per parameter are dropped; both cut-offs were chosen after seeing the residuals. On the Porian grid the way parameters are counted moves the compute-optimal exponent between about zero point five two and zero point seven five, and the apparent second size term at the small end lowers the fit objective by about ten point five to ten point eight percent when embeddings are counted and by at most about two point two five percent when they are not.
 
+
 \subsection*{Results}
-Every row is copied from \texttt{results/report\_numbers.txt}, which \texttt{report\_numbers.py} prints from the saved files in results/. The last column is the item number in that file. Run \texttt{check\_results\_md.py} to confirm that every number in a row appears in the items the row cites. Pairs written as "x vs y" read one-term versus two-term. Wins, ties and losses are written [wins, ties, losses] against the joint fit, and a held-out difference within 1e-6 is a tie.
+
+Every row is copied from results/report\_numbers.txt, which report\_numbers.py prints from the saved files in results/. The last column is the item number in that file. Run check\_results\_md.py to confirm that every number in a row appears in the items the row cites. Pairs written as "x vs y" read one-term versus two-term. Wins, ties and losses are written [wins, ties, losses] against the joint fit, and a held-out difference within 1e-6 is a tie.
+
 \subsubsection*{E1: calibration and power of the two-term test on simulated ladders}
-{\small
-\begin{longtable}{>{\raggedright\arraybackslash}p{0.50\linewidth}>{\raggedright\arraybackslash}p{0.17\linewidth}>{\raggedright\arraybackslash}p{0.17\linewidth}r}
+
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.581\linewidth}>{\raggedright\arraybackslash}p{0.124\linewidth}>{\raggedright\arraybackslash}p{0.124\linewidth}r}
 \toprule
 \textbf{Metric} & \textbf{0.3\% noise} & \textbf{1\% noise} & \textbf{Item} \\
 \midrule
@@ -37,9 +42,11 @@ Forecast error, one-term truth, median, one-term vs two-term & 0.00277 vs 0.0048
 Gated forecast error, two-term truth, median & 0.00797 & 0.01241 & 10 \\
 \end{longtable}
 }
+
 \subsubsection*{E2 and E2b: the joint law and extra terms on the 245 Chinchilla points}
-{\small
-\begin{longtable}{>{\raggedright\arraybackslash}p{0.40\linewidth}>{\raggedright\arraybackslash}p{0.45\linewidth}r}
+
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.573\linewidth}>{\raggedright\arraybackslash}p{0.277\linewidth}r}
 \toprule
 \textbf{Metric} & \textbf{Value} & \textbf{Item} \\
 \midrule
@@ -71,12 +78,14 @@ Token-axis held-out median error, joint to +D: without the 4 shortest & 0.0180 t
 Token-axis held-out median error, joint to +D: without the 11 shortest & 0.0100 to 0.0081 & 38 \\
 Wins, ties, losses for +D over twelve cuts: all runs / without 4 / without 11 & [11, 1, 0] / [11, 1, 0] / [5, 6, 1] & 40 \\
 Median over twelve cuts, repo single-start against multi-start joint: all runs / without 4 / without 11 & 0.0226 against 0.0265 / 0.0104 against 0.0147 / 0.0095 against 0.0096 & 41 \\
-Huber objective of the two-decimal \texttt{AGENTS.md} constants: all runs / without 4 / without 11 & 1.190e-02 / 1.129e-02 / 1.112e-02 & 42 \\
+Huber objective of the two-decimal AGENTS.md constants: all runs / without 4 / without 11 & 1.190e-02 / 1.129e-02 / 1.112e-02 & 42 \\
 \end{longtable}
 }
+
 \subsubsection*{E3: real fixed-data ladders (loss is the natural log of LAMBADA perplexity at final checkpoints)}
-{\small
-\begin{longtable}{>{\raggedright\arraybackslash}p{0.40\linewidth}>{\raggedright\arraybackslash}p{0.45\linewidth}r}
+
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.675\linewidth}>{\raggedright\arraybackslash}p{0.175\linewidth}r}
 \toprule
 \textbf{Metric} & \textbf{Value} & \textbf{Item} \\
 \midrule
@@ -89,9 +98,11 @@ Rolling-origin forecasts, two-term against one-term: wins, ties, losses & 0, 12,
 Mean absolute log error over the 13 forecasts, one-term vs two-term & 0.02852 vs 0.02868 & 25 \\
 \end{longtable}
 }
+
 \subsubsection*{E4: the Porian grid, parameter-count definition and the small-model bend}
-{\small
-\begin{longtable}{>{\raggedright\arraybackslash}p{0.40\linewidth}>{\raggedright\arraybackslash}p{0.45\linewidth}r}
+
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.586\linewidth}>{\raggedright\arraybackslash}p{0.264\linewidth}r}
 \toprule
 \textbf{Metric} & \textbf{Value} & \textbf{Item} \\
 \midrule
@@ -113,9 +124,11 @@ Porian backtests, wins, ties, losses at cap 1.5: +N / +D / both & [6, 0, 2] / [6
 Porian backtests, boundary-flagged fits out of 8: joint / +N / +D / both & 0 / 7 / 7 / 8 & 34 \\
 \end{longtable}
 }
+
 \subsubsection*{X: cross-check of experiment 09 from its saved predictions}
-{\small
-\begin{longtable}{>{\raggedright\arraybackslash}p{0.40\linewidth}>{\raggedright\arraybackslash}p{0.45\linewidth}r}
+
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.726\linewidth}>{\raggedright\arraybackslash}p{0.124\linewidth}r}
 \toprule
 \textbf{Metric} & \textbf{Value} & \textbf{Item} \\
 \midrule
@@ -127,25 +140,37 @@ Share of that squared error from the 3 test runs with D/N below 0.35, and the er
 \end{longtable}
 }
 
+
 \subsection*{Caveats}
-\begin{enumerate}[leftmargin=*,itemsep=2pt]
+
+\begin{enumerate}
   \item The simulation settings are my choices: the sizes, the two noise levels, one two-term truth, the seven-and-three forecast split, the exponent caps and the fit budgets. A truth with beta closer to alpha or a larger shallow amplitude would change the power numbers.
   \item The real ladders have seven or eight sizes and thirteen forecasts in total, and the metric is LAMBADA perplexity at final checkpoints, not a pre-training loss, so they have low power.
   \item The "within one percent" and "within five percent" bands are heuristics on the objective, not confidence intervals, and the point estimate moves by more than the width of the one percent band when a handful of runs are dropped.
   \item The 245 Chinchilla points come from the repo's data folder, and I did not verify their provenance. Why the four shortest runs sit above the fitted curve is untested, and I tested only the low side of tokens per parameter.
   \item On the Porian grid there is one learning rate and batch size. The minimum-steps filter is a choice, and the embedding explanation for the small-model bend is a hypothesis that this folder does not confirm.
   \item None of this was preregistered. The E2b cut-offs (D/N of 0.35 and 1) were chosen after seeing the residuals, so every win count and percentage from E2b is descriptive, not a test.
-  \item \texttt{scaling\_ext.py} and \texttt{safe\_pickle.py} are new code, checked against the repo's fitter, by seed stability and by fifty-five loader tests, and read by one four-reviewer pass.
+  \item scaling\_ext.py and safe\_pickle.py are new code, checked against the repo's fitter, by seed stability and by fifty-five loader tests, and read by one four-reviewer pass.
 \end{enumerate}
+
 
 \subsection*{Appendix: methods, harness and model}
-\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\subsubsection*{Appendix: methods, harness, model and context}
+
+\begin{enumerate}
   \item Harness and model: Claude Code cloud session, Claude Sonnet 5.5 (claude-sonnet-5-5). Every number is computed by the scripts in this folder; no language model judged any result. CPU only, two cores, no GPU, no cluster and no paid API.
-  \item Environment: CPython 3.13.18, which is outside the repo's 3.11 pin, with numpy 2.5.3, scipy 1.18.1, pandas 3.0.5 and matplotlib 3.11.2. The commands to rerun every experiment are in the Reproduce section of \texttt{REPORT.md}.
-  \item Data: the 245 Chinchilla points and the Pythia, deduplicated Pythia and OPT ladders from the repo's Hitchhiker's Guide files, and the Porian et al. grid, loaded through \texttt{py\_src/safe\_pickle.py} with a pinned SHA-256 digest.
-  \item Review: a four-reviewer pass by Claude Opus 5.5 at maximum effort found no critical issues, and a fresh re-verification found no critical or major issue. All fixes are applied in \texttt{REPORT.md}.
+  \item Environment: CPython 3.13.18, which is outside the repo's 3.11 pin, with numpy 2.5.3, scipy 1.18.1, pandas 3.0.5 and matplotlib 3.11.2. The commands to rerun every experiment are in the Reproduce section of REPORT.md.
+  \item Data: the 245 Chinchilla points and the Pythia, deduplicated Pythia and OPT ladders from the repo's Hitchhiker's Guide files, and the Porian et al. grid, loaded through py\_src/safe\_pickle.py with a pinned SHA-256 digest.
+  \item Review: a four-reviewer pass by Claude Opus 5.5 at maximum effort found no critical issues, and a fresh re-verification found no critical or major issue. All fixes are applied in REPORT.md.
   \item Relation to other folders as of commit 3626ba0: folder 15 (ub9sc) finds the second term convention dependent, with 1 of 38 bootstrap detections when embeddings are left out of the count and 13 of 38 and 12 of 38 with the tied and untied counts. My E4 points the same way in direction only, on a different slice and without a calibrated test. Folder 14 (ub9sc) is scientifically unresolved because its control gates fail, and it does not test the Chinchilla finding above. Folder 11, the embedding ladder, has only its README on main.
-  \item Provenance check: \texttt{check\_results\_md.py} reads the tables above and fails if any number in a row is missing from the items that row cites.
+  \item Provenance check: check\_results\_md.py reads the tables above and fails if any number in a row is missing from the items that row cites.
+  \item Corrections on 11-27-2026, after a mega QA pass: the Gaussian statistic's nominal power of 60\% and 18\% and its area under the curve of 0.900 and 0.770 were measured on the ten-size ladders and are now labelled that way (they had been labelled seven-size, where only the false-positive rate was computed); the bootstrap p-value of the OPT ladder is 1.000, not 0.647, because its collapsed two-term fit gave a statistic of minus 9e-16 that is now clamped at zero and the OPT test was recomputed with the same seeds. No other number changed.
+  \item Mega QA record, 11-27-2026: the reviewer Carbon read this folder and the library code at commits 3221308 and c49cd63, and every finding that touched this folder was fixed or rejected with evidence in \texttt{experiments/\allowbreak{}MEGA\_\allowbreak{}QA\_\allowbreak{}11-27-2026.md}. After the second pass the 150-line \texttt{scaling\_\allowbreak{}ext.fit} was split into helpers; \texttt{test\_\allowbreak{}scaling\_\allowbreak{}ext\_\allowbreak{}golden.py} shows that 11 fits (every fitting mode) return the same 107 numbers as before, and \texttt{test\_\allowbreak{}scaling\_\allowbreak{}ext\_\allowbreak{}vs\_\allowbreak{}c49cd63.py} finds 0 differences in 38 random calls against commit c49cd63. \texttt{check\_\allowbreak{}results\_\allowbreak{}md.py} now also fails on an integer that only matches the leading digits of a longer number and on a table row whose last cell is not a list of item numbers; it passes on this folder. No number in this folder changed.
 \end{enumerate}
 
-\noindent Source: \url{https://github.com/brando90/dark-matter/blob/main/experiments/16_two_term_lrt_calibration_chinchilla_backtest_porian_n_count_start_25Nov2026_end_26Nov2026/results.md}
+\subsubsection*{Links}
+\begin{itemize}
+  \item results.md: \url{https://github.com/brando90/dark-matter/blob/main/experiments/16_two_term_lrt_calibration_chinchilla_backtest_porian_n_count_start_25Nov2026_end_26Nov2026/results.md}
+  \item commit: \url{https://github.com/brando90/dark-matter/commit/0fdf3fe}
+  \item commit: \url{https://github.com/brando90/dark-matter/commit/006ea3e}
+\end{itemize}

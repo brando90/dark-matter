@@ -80,6 +80,7 @@ Under the null, the fitted M2 often reports a large fast term that is only the t
 10. Two reporting-script bugs surfaced at the first summary run and were fixed without touching any gate rule or control result: `DataFrame.T` is the transpose, not the statistic column, and `read_csv` turned the control name "null" into a missing value. The same fix went into the resume-read of `controls.py`; the control files hold exactly 20 distinct replicates per control.
 11. The real-data stage ran after the gate controls and while the report-only stress controls were still running; the stress controls gate nothing, so the order does not affect any verdict.
 12. Cost: the 100 control replicates of each dataset took 0.22 CPU hours in total, a median of 7.8 seconds each on both (items 34, 35).
+13. Mega QA record, 11-27-2026 (reviewer Carbon, at commit c49cd63; see `experiments/MEGA_QA_11-27-2026.md`): its one major finding was that `Design.fit` could in principle return a fit that breaks the constraint gamma at least alpha plus 0.15. `verify_f1_saved_workload.py` found no such start cell among the 208,510 picked on this folder's workload, and it reproduced 20 of the 200 control replicates and the real owt2 stage exactly, so no number here changed. The library now masks such cells, returns an infinite sum of squares for a polished point that breaks a constraint, and raises `InsufficientDataError` when no feasible fit exists; the unit tests grew from 9 to 17 checks. Carbon's last pass was not repeated after these fixes.
 
 ## What would move this next
 

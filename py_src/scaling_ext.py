@@ -165,6 +165,123 @@ def _bounds(spec, exp_max=4.0):
     return b
 
 
+def _checked_inputs(spec, N, L, D):
+    """Float arrays, with the positivity and 'spec uses D' checks that fit() raises ValueError for."""
+    N = np.asarray(N, float)
+    L = np.asarray(L, float)
+    D = None if D is None else np.asarray(D, float)
+    if (N <= 0).any() or (L <= 0).any() or (D is not None and (D <= 0).any()):
+        raise ValueError("N, D, L must be strictly positive")
+    if any(t.var == "D" for t in spec.terms) and D is None:
+        raise ValueError("spec uses D but D is None")
+    return N, L, D
+
+
+def _candidate(spec, phi, N, D, L, logL, objective, delta):
+    """(objective value, phi, coefficients) at exponents phi, with the coefficients from non-negative least squares."""
+    e = _exponents(spec, phi)
+    coef, _ = nnls(_design(spec, e, N, D) / L[:, None], np.ones_like(L))
+    return (_eval_coef(spec, coef, e, N, D, logL, objective, delta), phi, coef)
+
+
+def _sample_starts(spec, N, D, L, logL, rng, n_starts, e_range, fix_main, objective, delta):
+    """n_starts random exponent vectors (frozen exponents fixed), each with its NNLS coefficients, sorted best first."""
+    cands = []
+    for _ in range(n_starts):
+        em = np.exp(rng.uniform(np.log(e_range[0]), np.log(e_range[1]), spec.n_main))
+        for i_fix, v_fix in fix_main.items():
+            em[i_fix] = v_fix
+        rho = rng.uniform(0.05, 0.95, spec.n_free_ratio)
+        cands.append(_candidate(spec, np.concatenate([em, rho]), N, D, L, logL, objective, delta))
+    cands.sort(key=lambda z: z[0])
+    return cands
+
+
+def _nested_start(spec, warm, L):
+    """The exact start that reproduces `warm` inside the bigger `spec`: (exponent vector, [E, coefficients], mask of the new
+    exponent slots). New coefficients start at 1e-6 of the median loss."""
+    n_warm = len(warm.spec.terms)
+    main_idx = [k for k, t in enumerate(spec.terms) if t.sub_of is None]
+    em = [warm.e[k] if k < n_warm else 0.5 for k in main_idx]
+    em_new = [k >= n_warm for k in main_idx]
+    rho, rho_new = [], []
+    for k, t in enumerate(spec.terms):
+        if t.sub_of is not None and t.ratio is None:
+            rho.append(float(warm.e[k] / warm.e[t.sub_of]) if k < n_warm else 0.5)
+            rho_new.append(k >= n_warm)
+    scale = max(float(np.median(L)), 1e-3)
+    c0 = np.concatenate([warm.c, np.full(len(spec.terms) - n_warm, 1e-6 * scale)])
+    return np.array(em + rho, float), np.concatenate([[warm.E], c0]), np.array(em_new + rho_new, bool)
+
+
+def _lift_new_coefficients(spec, warm, coef, phi, N, D, L):
+    """A new coefficient that starts at ~0 sits on a flat plateau of the log-parametrisation (zero gradient), so every new
+    term is lifted to a small but real contribution (5 % of its natural scale) before refinement."""
+    coef = coef.copy()
+    e = _exponents(spec, phi)
+    for k in range(len(warm.spec.terms), len(spec.terms)):
+        t = spec.terms[k]
+        x_med = float(np.median(_x(t.var, N, D)))
+        if t.sub_of is not None:
+            base = max(coef[1 + t.sub_of], 1e-12) * x_med ** (-e[t.sub_of])
+        else:
+            base = max(float(np.median(L)) - warm.E, 1e-6)
+        coef[1 + k] = max(coef[1 + k], 0.05 * base * x_med ** e[k])
+    return coef
+
+
+def _new_slot_seeds(spec, warm, phi_w, is_new, N, D, L, logL, rng, n_starts, e_range, objective, delta):
+    """Extra seeds that keep the warm exponents and scan only the NEW exponent slots; the best two, coefficients lifted."""
+    seeds = []
+    for _ in range(max(40, n_starts // 3)):
+        phi = phi_w.copy()
+        for j in np.where(is_new)[0]:
+            phi[j] = (np.exp(rng.uniform(np.log(e_range[0]), np.log(e_range[1]))) if j < spec.n_main
+                      else rng.uniform(0.05, 0.95))
+        seeds.append(_candidate(spec, phi, N, D, L, logL, objective, delta))
+    seeds.sort(key=lambda z: z[0])
+    return [(phi, _lift_new_coefficients(spec, warm, coef, phi, N, D, L)) for _, phi, coef in seeds[:2]]
+
+
+def _frozen_bounds(spec, exp_max, fix_main):
+    """Lower and upper bound vectors in the encoded parametrisation; frozen main exponents get a +-1e-9 window."""
+    bnds = _bounds(spec, exp_max)
+    for i_fix, v_fix in fix_main.items():
+        j = 1 + len(spec.terms) + i_fix
+        bnds[j] = (float(np.log(v_fix)) - 1e-9, float(np.log(v_fix)) + 1e-9)
+    return np.array([b[0] for b in bnds]), np.array([b[1] for b in bnds])
+
+
+def _make_resid(spec, logN, logD, logL):
+    """Log-sum-exp residual of the additive model as a function of the encoded parameter vector."""
+    def resid(th):
+        E, c, phi = _decode(spec, th)
+        e = _exponents(spec, phi)
+        terms = [np.full_like(logN, th[0])]
+        for k, t in enumerate(spec.terms):
+            terms.append(th[1 + k] - e[k] * (logN if t.var == "N" else logD))
+        M = np.vstack(terms)
+        m = M.max(axis=0)
+        return m + np.log(np.exp(M - m).sum(axis=0)) - logL
+    return resid
+
+
+def _refine(spec, starts, resid, lb, ub, ls_kwargs, objective, delta, max_nfev):
+    """Trust-region least squares from every start; returns (best value, best encoded parameters, solver success)."""
+    best_val, best_th, ok = np.inf, None, False
+    for phi, coef in starts:
+        th0 = np.clip(_encode(spec, coef[0], coef[1:], phi), lb + 1e-9, ub - 1e-9)
+        try:
+            res = least_squares(resid, th0, bounds=(lb, ub), method="trf",
+                                xtol=1e-13, ftol=1e-13, gtol=1e-13, max_nfev=max_nfev, **ls_kwargs)
+        except Exception:
+            continue
+        val = _obj_from_resid(resid(res.x), objective, delta)
+        if val < best_val:
+            best_val, best_th, ok = val, res.x, bool(res.success)
+    return best_val, best_th, ok
+
+
 def fit(
     spec: ModelSpec,
     N,
@@ -192,125 +309,35 @@ def fit(
     fix_main = dict(fix_main or {})
     if fix_main:
         warm = None
-    N = np.asarray(N, float)
-    L = np.asarray(L, float)
-    D = None if D is None else np.asarray(D, float)
-    if (N <= 0).any() or (L <= 0).any() or (D is not None and (D <= 0).any()):
-        raise ValueError("N, D, L must be strictly positive")
+    N, L, D = _checked_inputs(spec, N, L, D)
     logL = np.log(L)
-    logN = np.log(N)
-    logD = None if D is None else np.log(D)
     rng = np.random.default_rng(seed)
-    nm, nr, T = spec.n_main, spec.n_free_ratio, len(spec.terms)
     e_range = (e_range[0], min(e_range[1], exp_max))
-    need_D = any(t.var == "D" for t in spec.terms)
-    if need_D and D is None:
-        raise ValueError("spec uses D but D is None")
 
-    # 1) random exponents + NNLS for linear coefficients
-    cands = []
-    for _ in range(n_starts):
-        em = np.exp(rng.uniform(np.log(e_range[0]), np.log(e_range[1]), nm))
-        for i_fix, v_fix in fix_main.items():
-            em[i_fix] = v_fix
-        rho = rng.uniform(0.05, 0.95, nr)
-        phi = np.concatenate([em, rho])
-        e = _exponents(spec, phi)
-        X = _design(spec, e, N, D)
-        coef, _ = nnls(X / L[:, None], np.ones_like(L))
-        cands.append((_eval_coef(spec, coef, e, N, D, logL, objective, delta), phi, coef))
-    cands.sort(key=lambda z: z[0])
+    # 1) random exponents + NNLS for linear coefficients, best first
+    cands = _sample_starts(spec, N, D, L, logL, rng, n_starts, e_range, fix_main, objective, delta)
 
-    # 2) optional nested warm start (prefix model)
+    # 2) the best random starts, plus (optionally) a nested warm start from the prefix model and seeds around it
     starts = [(phi, coef) for _, phi, coef in cands[:n_refine]]
-    if warm is not None:
-        wt = warm.spec.terms
-        if len(wt) < T and spec.terms[:len(wt)] == wt:
-            e_w = list(warm.e)
-            main_idx = [k for k, t in enumerate(spec.terms) if t.sub_of is None]
-            em = [e_w[k] if k < len(wt) else 0.5 for k in main_idx]
-            em_new = [k >= len(wt) for k in main_idx]
-            rho, rho_new = [], []
-            for k, t in enumerate(spec.terms):
-                if t.sub_of is not None and t.ratio is None:
-                    if k < len(wt):
-                        rho.append(float(warm.e[k] / warm.e[t.sub_of]))
-                        rho_new.append(False)
-                    else:
-                        rho.append(0.5)
-                        rho_new.append(True)
-            phi_w = np.array(em + rho, float)
-            is_new = np.array(em_new + rho_new, bool)
-            scale = max(float(np.median(L)), 1e-3)
-            c0 = np.concatenate([warm.c, np.full(T - len(wt), 1e-6 * scale)])
-            starts.insert(0, (phi_w, np.concatenate([[warm.E], c0])))   # exact nested start: can never be worse
+    n_warm = 0 if warm is None else len(warm.spec.terms)
+    if warm is not None and n_warm < len(spec.terms) and spec.terms[:n_warm] == warm.spec.terms:
+        phi_w, coef_w, is_new = _nested_start(spec, warm, L)
+        starts.insert(0, (phi_w, coef_w))   # exact nested start: can never be worse
+        if is_new.any():
+            starts.extend(_new_slot_seeds(spec, warm, phi_w, is_new, N, D, L, logL, rng, n_starts, e_range, objective, delta))
 
-            # Extra seeds that keep the warm exponents and scan only the NEW exponent slots. A new coefficient that
-            # starts at ~0 sits on a flat plateau of the log-parametrisation (zero gradient), so every new term is
-            # lifted to a small but real contribution before refinement.
-            if is_new.any():
-                seeds = []
-                for _ in range(max(40, n_starts // 3)):
-                    phi = phi_w.copy()
-                    for j in np.where(is_new)[0]:
-                        phi[j] = (np.exp(rng.uniform(np.log(e_range[0]), np.log(e_range[1]))) if j < nm
-                                  else rng.uniform(0.05, 0.95))
-                    e = _exponents(spec, phi)
-                    coef, _ = nnls(_design(spec, e, N, D) / L[:, None], np.ones_like(L))
-                    seeds.append((_eval_coef(spec, coef, e, N, D, logL, objective, delta), phi, coef))
-                seeds.sort(key=lambda z: z[0])
-                for _, phi, coef in seeds[:2]:
-                    coef = coef.copy()
-                    e = _exponents(spec, phi)
-                    for k in range(len(wt), T):
-                        t = spec.terms[k]
-                        x_med = float(np.median(_x(t.var, N, D)))
-                        if t.sub_of is not None:
-                            base = max(coef[1 + t.sub_of], 1e-12) * x_med ** (-e[t.sub_of])
-                        else:
-                            base = max(float(np.median(L)) - warm.E, 1e-6)
-                        coef[1 + k] = max(coef[1 + k], 0.05 * base * x_med ** e[k])
-                    starts.append((phi, coef))
-
-    best_val, best_th = np.inf, None
-
-    def resid(th):
-        E, c, phi = _decode(spec, th)
-        e = _exponents(spec, phi)
-        terms = [np.full_like(logN, th[0])]
-        for k, t in enumerate(spec.terms):
-            terms.append(th[1 + k] - e[k] * (logN if t.var == "N" else logD))
-        M = np.vstack(terms)
-        m = M.max(axis=0)
-        return m + np.log(np.exp(M - m).sum(axis=0)) - logL
-
-    bnds = _bounds(spec, exp_max)
-    for i_fix, v_fix in fix_main.items():
-        j = 1 + T + i_fix
-        bnds[j] = (float(np.log(v_fix)) - 1e-9, float(np.log(v_fix)) + 1e-9)
-    lb = np.array([b[0] for b in bnds])
-    ub = np.array([b[1] for b in bnds])
-    # scipy's robust 'huber' loss with f_scale=delta minimises exactly sum(huber(r, delta)) (cost = that sum);
-    # a trust-region least-squares solver copes with the near-L1 kink at delta=1e-3 far better than L-BFGS-B.
+    # 3) trust-region refinement of every start; scipy's robust 'huber' loss with f_scale=delta minimises exactly
+    # sum(huber(r, delta)), and a trust-region solver copes with the near-L1 kink at delta=1e-3 far better than L-BFGS-B.
+    lb, ub = _frozen_bounds(spec, exp_max, fix_main)
     ls_kwargs = dict(loss="huber", f_scale=delta) if objective == "huber" else dict(loss="linear")
-    ok = False
-    for phi, coef in starts:
-        th0 = np.clip(_encode(spec, coef[0], coef[1:], phi), lb + 1e-9, ub - 1e-9)
-        try:
-            res = least_squares(resid, th0, bounds=(lb, ub), method="trf",
-                                xtol=1e-13, ftol=1e-13, gtol=1e-13, max_nfev=max_nfev, **ls_kwargs)
-        except Exception:
-            continue
-        val = _obj_from_resid(resid(res.x), objective, delta)
-        if val < best_val:
-            best_val, best_th, ok = val, res.x, bool(res.success)
+    resid = _make_resid(spec, np.log(N), None if D is None else np.log(D), logL)
+    best_val, best_th, ok = _refine(spec, starts, resid, lb, ub, ls_kwargs, objective, delta, max_nfev)
     # also compare with the best raw grid point (guards against a bad refine)
     gval, gphi, gcoef = cands[0]
     if gval < best_val:
         best_val, best_th, ok = gval, _encode(spec, gcoef[0], gcoef[1:], gphi), True
     E, c, phi = _decode(spec, best_th)
-    e = _exponents(spec, phi)
-    out = FitResult(spec, float(E), np.asarray(c, float), e, best_val, 0.0, len(L), ok)
+    out = FitResult(spec, float(E), np.asarray(c, float), _exponents(spec, phi), best_val, 0.0, len(L), ok)
     r = log_resid(out, N, L, D)
     out.rss = float(np.sum(r * r))
     out.objective = _obj_from_resid(r, objective, delta)

@@ -7,3 +7,11 @@ PASS bootstrap reproducible for a fixed generator
 PASS p-value is at least 1/(B+1)
 PASS raises InsufficientDataError: too few points
 PASS raises InsufficientDataError: one distinct size
+PASS raises ValueError: an infinite N
+PASS raises ValueError: a length-1 response
+PASS raises ValueError: a response that is one point short
+PASS exact M1 fit gives T = 0, not nan T=0.0
+PASS exact M2 fit against an imperfect M1 gives a finite large T T=44900.4
+PASS grid ranking excludes every cell with gamma < alpha + GAP 5408 excluded of 25600
+PASS polish from an infeasible start returns an infinite RSS, never a fit
+PASS 40 null draws: every start cell feasible and every polished M2 fit feasible infeasible picks 0, infeasible fits 0

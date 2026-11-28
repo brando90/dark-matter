@@ -93,6 +93,7 @@ The 245 rows are not training logs. In every row FLOPs equal 6 N D to 4.4e-16, s
 3. Experiment 04's two-term bootstrap on the matched ladder shares one random generator with the joint bootstrap, so its resamples differ between arms by construction; it is not compared.
 4. The threshold D/N below 1 is the folder 16 definition, chosen before this folder; the dose-response control and the published replication point to the five lowest ratios as the main driver, and the control that removes random runs was added after seeing the results.
 5. Every result concerns the 245 figure-reconstructed rows, not original run data.
+6. Mega QA record, 11-27-2026 (reviewer Carbon, twice; see `experiments/MEGA_QA_11-27-2026.md`): the first pass found that the harness check had left experiment 04's Chinchilla rows out, which understated the largest relative difference as 3.4e-04 where it is 1.6e-03 (fixed everywhere), and the second pass found raw Markdown links in this folder's LaTeX fragment (fixed in the fragment generator). `check_results_md.py` was tightened and still passes on this folder. No other number changed.
 
 ## What would move this next
 

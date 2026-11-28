@@ -8,7 +8,7 @@
 
 \subsection*{Bottom line}
 
-Verdict: \textbf{THE 11 SHORT RUNS DRIVE THE CHINCHILLA RESULTS OF EXPERIMENTS 02, 03, 04 AND 09; EXTRA TERMS STILL DO NOT HELP IN EITHER ARM; THE HARNESS CHECK AT 1E-6 FAILED.} Without the 11 runs the joint fit's residual RMSE falls from 0.096138 to 0.014379, the quadratic structure of the residuals against log D disappears (R-squared 0.320319 to 0.003811), the token exponent falls from 0.455748 to 0.339172 and no longer depends on the Huber delta, and the size-holdout RMSE falls from 0.250103 to 0.027313. Most of that last fall is a change of test set: the four short runs that sit in the size holdout leave it, and the all-runs model scores 0.030269 on the 38 test runs that remain. The same pattern appears when the five lowest ratios are removed one by one, and it is not produced by removing random runs. The runs are the same ones a published replication flags as unexplained high-loss outliers; details in [provenance.md](provenance.md).
+Verdict: \textbf{THE 11 SHORT RUNS DRIVE THE CHINCHILLA RESULTS OF EXPERIMENTS 02, 03, 04 AND 09; EXTRA TERMS STILL DO NOT HELP IN EITHER ARM; THE HARNESS CHECK AT 1E-6 FAILED.} Without the 11 runs the joint fit's residual RMSE falls from 0.096138 to 0.014379, the quadratic structure of the residuals against log D disappears (R-squared 0.320319 to 0.003811), the token exponent falls from 0.455748 to 0.339172 and no longer depends on the Huber delta, and the size-holdout RMSE falls from 0.250103 to 0.027313. Most of that last fall is a change of test set: the four short runs that sit in the size holdout leave it, and the all-runs model scores 0.030269 on the 38 test runs that remain. The same pattern appears when the five lowest ratios are removed one by one, and it is not produced by removing random runs. The runs are the same ones a published replication flags as unexplained high-loss outliers; details in \texttt{provenance.md}.
 
 
 \subsection*{Results}
@@ -134,7 +134,7 @@ Rows that cannot depend on the short runs, experiments 02, 09 and 03 & 24, 19 an
 
 \subsubsection*{Provenance of the short runs, in brief}
 
-The 245 rows are not training logs. In every row FLOPs equal 6 N D to 4.4e-16, so tokens are derived from FLOPs and N (item 38); the rows were reconstructed from a scatter plot of the Hoffmann et al. paper by Besiroglu et al., who drop five high-loss runs near 1e19 FLOP as unexplained outliers. Our five lowest ratios, 0.036, 0.1732, 0.2332, 0.3085 and 0.4031, are all in that column and have losses up to 1.686 times those of neighbouring runs (item 37). Whether any of the runs was really trained that way cannot be checked from public data. Full account and sources: [provenance.md](provenance.md).
+The 245 rows are not training logs. In every row FLOPs equal 6 N D to 4.4e-16, so tokens are derived from FLOPs and N (item 38); the rows were reconstructed from a scatter plot of the Hoffmann et al. paper by Besiroglu et al., who drop five high-loss runs near 1e19 FLOP as unexplained outliers. Our five lowest ratios, 0.036, 0.1732, 0.2332, 0.3085 and 0.4031, are all in that column and have losses up to 1.686 times those of neighbouring runs (item 37). Whether any of the runs was really trained that way cannot be checked from public data. Full account and sources: \texttt{provenance.md}.
 
 
 \subsection*{Caveats}
@@ -145,6 +145,7 @@ The 245 rows are not training logs. In every row FLOPs equal 6 N D to 4.4e-16, s
   \item Experiment 04's two-term bootstrap on the matched ladder shares one random generator with the joint bootstrap, so its resamples differ between arms by construction; it is not compared.
   \item The threshold D/N below 1 is the folder 16 definition, chosen before this folder; the dose-response control and the published replication point to the five lowest ratios as the main driver, and the control that removes random runs was added after seeing the results.
   \item Every result concerns the 245 figure-reconstructed rows, not original run data.
+  \item Mega QA record, 11-27-2026 (reviewer Carbon, twice; see \texttt{experiments/\allowbreak{}MEGA\_\allowbreak{}QA\_\allowbreak{}11-27-2026.md}): the first pass found that the harness check had left experiment 04's Chinchilla rows out, which understated the largest relative difference as 3.4e-04 where it is 1.6e-03 (fixed everywhere), and the second pass found raw Markdown links in this folder's LaTeX fragment (fixed in the fragment generator). \texttt{check\_\allowbreak{}results\_\allowbreak{}md.py} was tightened and still passes on this folder. No other number changed.
 \end{enumerate}
 
 
@@ -161,4 +162,6 @@ Refit the Chinchilla law with the five or eleven runs treated as censored or dow
 \begin{itemize}
   \item results.md: \url{https://github.com/brando90/dark-matter/blob/main/experiments/18_short_runs_with_without_exp02_03_04_09_start_27Nov2026_end_27Nov2026/results.md}
   \item commit: \url{https://github.com/brando90/dark-matter/commit/3221308}
+  \item commit: \url{https://github.com/brando90/dark-matter/commit/67839d7}
+  \item commit: \url{https://github.com/brando90/dark-matter/commit/006ea3e}
 \end{itemize}

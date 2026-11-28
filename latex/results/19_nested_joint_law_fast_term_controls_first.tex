@@ -108,6 +108,7 @@ Under the null, the fitted M2 often reports a large fast term that is only the t
   \item Two reporting-script bugs surfaced at the first summary run and were fixed without touching any gate rule or control result: \texttt{DataFrame.T} is the transpose, not the statistic column, and \texttt{read\_\allowbreak{}csv} turned the control name "null" into a missing value. The same fix went into the resume-read of \texttt{controls.py}; the control files hold exactly 20 distinct replicates per control.
   \item The real-data stage ran after the gate controls and while the report-only stress controls were still running; the stress controls gate nothing, so the order does not affect any verdict.
   \item Cost: the 100 control replicates of each dataset took 0.22 CPU hours in total, a median of 7.8 seconds each on both (items 34, 35).
+  \item Mega QA record, 11-27-2026 (reviewer Carbon, at commit c49cd63; see \texttt{experiments/\allowbreak{}MEGA\_\allowbreak{}QA\_\allowbreak{}11-27-2026.md}): its one major finding was that \texttt{Design.fit} could in principle return a fit that breaks the constraint gamma at least alpha plus 0.15. \texttt{verify\_\allowbreak{}f1\_\allowbreak{}saved\_\allowbreak{}workload.py} found no such start cell among the 208,510 picked on this folder's workload, and it reproduced 20 of the 200 control replicates and the real owt2 stage exactly, so no number here changed. The library now masks such cells, returns an infinite sum of squares for a polished point that breaks a constraint, and raises \texttt{InsufficientDataError} when no feasible fit exists; the unit tests grew from 9 to 17 checks. Carbon's last pass was not repeated after these fixes.
 \end{enumerate}
 
 
@@ -128,4 +129,6 @@ Under the null, the fitted M2 often reports a large fast term that is only the t
 \subsubsection*{Links}
 \begin{itemize}
   \item results.md: \url{https://github.com/brando90/dark-matter/blob/main/experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026_end_27Nov2026/results.md}
+  \item commit: \url{https://github.com/brando90/dark-matter/commit/c49cd63}
+  \item commit: \url{https://github.com/brando90/dark-matter/commit/0683e8a}
 \end{itemize}

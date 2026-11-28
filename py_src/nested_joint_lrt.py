@@ -19,6 +19,12 @@ correlated in reality; experiments/19_*/ reports a stress control for that.
 
 Fit routines raise InsufficientDataError when the design has too few points or too few distinct sizes or token counts;
 they never substitute other data.
+
+Feasibility. Every polish starts from a grid cell that satisfies gamma >= alpha + GAP and the exponent bounds (cells that
+violate the gap are removed from the ranking, not merely penalised), and the best vertex of a Nelder-Mead run can never be
+worse than its start, so a polished exponent triple is feasible by construction. _polish re-checks that and returns an
+infinite RSS if it ever is not, so an infeasible fit can never win. The wall in _objective is deliberately flat (1e30): it
+only has to rank infeasible trial points last, and keeping it unchanged keeps the committed Nelder-Mead paths identical.
 """
 from __future__ import annotations
 
@@ -62,8 +68,8 @@ class Design:
             raise InsufficientDataError(f"{len(N)} points; need at least {MIN_POINTS}")
         if len(np.unique(N)) < MIN_DISTINCT or len(np.unique(D)) < MIN_DISTINCT:
             raise InsufficientDataError("too few distinct sizes or token counts for five parameters")
-        if not (np.all(N > 0) and np.all(D > 0) and np.all(sd > 0)):
-            raise ValueError("N, D and sd must be positive")
+        if not all(np.all(np.isfinite(x) & (x > 0)) for x in (N, D, sd)):
+            raise ValueError("N, D and sd must be finite and positive")
         self.n, self.d, self.w = N / 1e6, D / 1e9, 1.0 / sd ** 2
         self.npts = len(N)
         self._sw = np.sqrt(self.w)
@@ -102,8 +108,9 @@ class Design:
 
     # ---- grid search ----------------------------------------------------------------------------------------------
     def _grid_rss(self, y, two_terms):
-        """Weighted RSS of the unconstrained least-squares fit on every grid cell; infeasible cells (a negative
-        coefficient, or gamma < alpha + GAP) get INFEASIBLE added so that they rank last but stay orderable."""
+        """Weighted RSS of the unconstrained least-squares fit on every grid cell. A cell with a negative coefficient gets
+        INFEASIBLE added so that it ranks last but stays orderable (its exact non-negative fit is computed later by NNLS, so it
+        is a legitimate start). An M2 cell with gamma < alpha + GAP is excluded outright (inf): it can never be a start."""
         wy = self.w * y
         yy = float(wy @ y)
         r0, ra, rb = float(wy.sum()), self._a @ wy, self._b @ wy
@@ -122,8 +129,9 @@ class Design:
             r[..., 2], r[..., 3] = rb[None, :, None], rc[None, None, :]
             coef = np.einsum("abgij,abgj->abgi", self._ginv2, r)
             rss = yy - np.einsum("abgi,abgi->abg", coef, r)
-            bad = (coef < 0).any(-1) | ~self._ok2
-        return np.where(bad, rss + INFEASIBLE, rss)
+            bad = (coef < 0).any(-1)
+        out = np.where(bad, rss + INFEASIBLE, rss)
+        return np.where(self._ok2, out, np.inf) if two_terms else out
 
     @staticmethod
     def _distinct_cells(rss, k):
@@ -159,29 +167,45 @@ class Design:
                 return 1e30 + abs(t - min(max(t, lo), hi))
         return self._nnls(theta, y)[1]
 
+    @staticmethod
+    def _feasible(theta):
+        """Exactly the constraints _objective enforces: exponent bounds and, for M2, gamma >= alpha + GAP."""
+        lo_hi = (ALPHA_BOUNDS, BETA_BOUNDS, GAMMA_BOUNDS)[:len(theta)]
+        if not all(lo <= t <= hi for t, (lo, hi) in zip(theta, lo_hi)):
+            return False
+        return not (len(theta) == 3 and theta[2] < theta[0] + GAP)
+
     def _polish(self, start, y):
         res = minimize(self._objective, np.asarray(start, float), args=(y,), method="Nelder-Mead",
                        options=dict(xatol=1e-5, fatol=1e-12, maxiter=600, maxfev=900))
+        if not self._feasible(res.x):   # unreachable from a feasible start; guarded so an infeasible fit can never win
+            return Fit(rss=float("inf"), coef=(), exps=tuple(float(t) for t in res.x), fitted=np.full(self.npts, np.nan))
         coef, rss, X = self._nnls(res.x, y)
         return Fit(rss=rss, coef=tuple(coef), exps=tuple(float(t) for t in res.x), fitted=X @ coef)
 
     def fit(self, y, two_terms, n_starts=None):
         """Best polished fit of M1 (two_terms False) or M2 (True) over the best distinct grid cells."""
         y = np.asarray(y, float)
+        if y.shape != (self.npts,):
+            raise ValueError(f"y must be a 1-d array of length {self.npts}, got shape {y.shape}")
         k = n_starts or (3 if two_terms else 2)
         cells = self._distinct_cells(self._grid_rss(y, two_terms), k)
         if not cells:
             raise InsufficientDataError("no finite grid cell: the response is not finite or the design is degenerate")
         grids = (ALPHA_GRID, BETA_GRID, GAMMA_GRID)
         fits = [self._polish([g[i] for g, i in zip(grids, cell)], y) for cell in cells]
-        return min(fits, key=lambda f: f.rss)
+        best = min(fits, key=lambda f: f.rss)
+        if not np.isfinite(best.rss):
+            raise InsufficientDataError("no feasible polished fit")
+        return best
 
     def statistic(self, y):
         """(T, fit1, fit2) with RSS_2 clipped at RSS_1 so that T >= 0."""
         f1 = self.fit(y, False)
         f2 = self.fit(y, True)
         rss2 = min(f2.rss, f1.rss)
-        return self.npts * float(np.log(f1.rss / rss2)), f1, f2
+        floor = 1e-300   # an exactly fitted M1 gives T = 0, not 0/0; unchanged for every RSS above the floor
+        return self.npts * float(np.log(max(f1.rss, floor) / max(rss2, floor))), f1, f2
 
     def bootstrap_lrt(self, y, B=B_DEFAULT, rng=None, level=LEVEL):
         """Parametric-bootstrap p-value of M2 against M1. Returns dict(T, p, detect, B, T_boot, sigma_hat, fit1, fit2)."""

@@ -9,7 +9,7 @@ a parametric bootstrap: B refits of data simulated from the fitted 1-term law wi
 Detection rule: (1 + k) / (B + 1) <= level, k = number of bootstrap T* that reach T. DM-1b measured this rule's null
 rejection at 0.049 pooled (12,000 null replicates) and 0.070 in the worst cell (experiments/dm1_power_analysis/
 RESULTS_DM1b.md). The old chi-square test on the Huber objective, scaling_laws_fit.lr_test_chi2_uncalibrated, is not
-calibrated: folder 16 measured its statistic 4e4 to 9e4 times below its cutoff on Chinchilla.
+calibrated: folder 16 measured its statistic 4e4 to 9e4 times below its cutoff on simulated ten-size ladders.
 
 Provenance. The block between the BEGIN and END markers is copied from experiments/dm1_power_analysis/dm1b.py
 (commit 3626ba0) with exactly three textual changes: dm1.ALPHA_GRID, dm1.A2_GRID, dm1.D2_GRID became module constants.

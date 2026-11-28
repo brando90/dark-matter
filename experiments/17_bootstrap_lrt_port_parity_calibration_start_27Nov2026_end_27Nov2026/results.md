@@ -68,6 +68,6 @@ Every row is copied from results/report_numbers.txt, which report_numbers.py pri
 
 1. Library: `py_src/two_term_lrt.py` (new; DM-1b's fitter block plus `bootstrap_lr_test`, `fit_one_and_two_term`, the dataclasses and the error classes) and `py_src/scaling_laws_fit.py` (`lr_test` wrapper, `lr_test_chi2_uncalibrated` kept with a warning, `fit_two_term_N_only` validation and convergence record, repaired smoke test).
 2. Scripts: parity_dm1b.py, calibration_power.py, posthoc_multiplicative_noise.py, test_fail_loud.py, report_numbers.py, check_results_md.py. Every extra term is additive: `E + a n^-p + b n^-(p+d)` on the loss.
-3. Harness and model: Claude Code, claude-sonnet-5-5, CPU, two cores. The QA reviewers that read this folder are listed in the Mega QA section of the project report, not here.
+3. Harness and model: Claude Code, claude-sonnet-5-5, CPU, two cores. The QA reviewers that read this folder, and what they found, are recorded in `experiments/MEGA_QA_11-27-2026.md`; `check_results_md.py` was tightened after the second pass (it now fails on a malformed citation cell and on an integer that only matches the leading digits of a longer number) and still passes on this folder. No number in this folder changed.
 4. Seeds: data `[cell, rep, 20261127]`, bootstrap the same with a trailing 1, parity sample 20261127.
 5. Naming: in `two_term.alpha` and `two_term.beta`, alpha is the fast exponent (the larger one, matters at small N) and beta the slow one. DM-1b's own fit dictionary names them the other way round.

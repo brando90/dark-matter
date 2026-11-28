@@ -1,0 +1,4 @@
+fits run: 11 in 5.7 seconds
+golden fits compared: 11; numbers compared: 107; exactly equal: 107
+fits outside rtol 1e-09 / atol 1e-12: none
+RESULT: PASS
