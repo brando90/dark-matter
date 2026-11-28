@@ -4,7 +4,7 @@
 
 **TLDR:** The repo's two-term likelihood-ratio test cannot reject anything, and on the Chinchilla, Pythia, OPT and Porian data a second power of model size is neither supported nor excluded. The striking second data term on Chinchilla shrinks when the shortest runs are dropped, and the Porian parameter-count definition moves the compute-optimal exponent between about 0.52 and 0.75.
 
-Date: 11-26-2026. Experiments run: 11-25-2026. As of: 11-26-2026 11:00 PST.
+Date: 11-26-2026. Experiments run: 11-25-2026. As of: 11-27-2026 18:46 PST (mega QA corrections, appendix items 7 and 8).
 
 Status: COMPLETE, with no pending phase. Verdict: NO EVIDENCE FOR OR AGAINST A SECOND N TERM; THE REPO'S TEST CANNOT REJECT. Nothing here was preregistered.
 

@@ -4,7 +4,7 @@
 
 **TLDR:** The port reproduces DM-1b exactly, keeps its calibration on fresh ladders when the noise is additive, finds a strong second term every time, and the fitter now refuses empty or too-small selections. With multiplicative noise and a wide loss range, which real ladders resemble, the same test rejects about twice as often as its nominal level, so a detection is weaker evidence than five percent suggests.
 
-Date: 11-27-2026. As of: 11-27-2026 17:30 PST.
+Date: 11-27-2026. As of: 11-27-2026 18:46 PST (mega QA note, appendix item 3).
 
 Status: COMPLETE. Verdict: PORT VERIFIED, ALL FIVE CRITERIA PASS; POST HOC, THE TEST OVER-REJECTS UNDER WIDE-RANGE MULTIPLICATIVE NOISE. Criteria 1 to 4 were written before they were run; criterion 5 was not prospective (see README).
 
