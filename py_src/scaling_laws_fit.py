@@ -1,4 +1,6 @@
 # file: scaling_laws_fit.py
+import warnings
+
 import numpy as np
 import pandas as pd
 from dataclasses import dataclass
@@ -6,6 +8,15 @@ from typing import Tuple, Dict, Optional, Callable
 from scipy.optimize import minimize
 from scipy.special import logsumexp, expit
 from scipy.stats import chi2
+
+try:  # imported as part of the py_src package
+    from .two_term_lrt import FitError, InsufficientDataError, LRTResult, bootstrap_lr_test, validate_ladder
+except ImportError:  # run as a script: python py_src/scaling_laws_fit.py (py_src/ is then sys.path[0])
+    from two_term_lrt import FitError, InsufficientDataError, LRTResult, bootstrap_lr_test, validate_ladder
+
+# Fewest points fit_two_term_N_only accepts: five free parameters need at least six points to leave one residual
+# degree of freedom. lr_test needs 7 (two_term_lrt.MIN_POINTS_LRT, DM-1b's testability rule).
+MIN_POINTS_TWO_TERM_FIT = 6
 
 # ---------------------------
 # Utilities
@@ -96,7 +107,15 @@ def predict_joint(params: JointParams, N, D):
 # ---------------------------
 @dataclass
 class TwoTermParams:
+    """L(N) = E + A N^-alpha + B N^-beta with beta < alpha: alpha is the FAST exponent, beta the slow one.
+
+    converged / objective / message come from the optimizer (fit_two_term_N_only); they default to values that
+    mean "not recorded" when a TwoTermParams is built by hand.
+    """
     E: float; A: float; alpha: float; B: float; beta: float
+    converged: bool = True
+    objective: float = float("nan")
+    message: str = ""
 
 def _pack_two_term(theta):
     """
@@ -113,6 +132,14 @@ def _pack_two_term(theta):
     return E, A, alpha, B, beta
 
 def fit_two_term_N_only(N, L, delta=1e-3) -> TwoTermParams:
+    """Huber fit of L(N) = E + A/N^alpha + B/N^beta, beta < alpha (alpha fast), from a single start.
+
+    Fails loudly: raises InsufficientDataError for an empty selection or fewer than MIN_POINTS_TWO_TERM_FIT points
+    (or fewer than five distinct sizes), ValueError for NaN/inf/non-positive values or mismatched shapes, and
+    FitError if the optimizer returns a non-finite solution. It never substitutes other data. If L-BFGS-B stops
+    without converging, a RuntimeWarning is issued and the result carries converged=False and the optimizer message.
+    """
+    N, L = validate_ladder(N, L, min_points=MIN_POINTS_TWO_TERM_FIT, who="fit_two_term_N_only")
     logN = np.log(N); logL = np.log(L)
     def obj(theta):
         E, A, alpha, B, beta = _pack_two_term(theta)
@@ -129,8 +156,14 @@ def fit_two_term_N_only(N, L, delta=1e-3) -> TwoTermParams:
                        np.log(np.median(L) * N.mean()**0.3),
                        np.log(np.median(L) * N.mean()**0.1)])
     res = minimize(obj, theta0, method='L-BFGS-B')
+    if not (np.all(np.isfinite(res.x)) and np.isfinite(res.fun)):
+        raise FitError(f"fit_two_term_N_only: optimizer returned a non-finite solution ({res.message})")
     E, A, alpha, B, beta = _pack_two_term(res.x)
-    return TwoTermParams(E, A, alpha, B, beta)
+    if not res.success:
+        warnings.warn(f"fit_two_term_N_only: L-BFGS-B did not converge ({res.message}); returning the last iterate",
+                      RuntimeWarning, stacklevel=2)
+    return TwoTermParams(E, A, alpha, B, beta, converged=bool(res.success), objective=float(res.fun),
+                         message=str(res.message))
 
 def predict_two_term(p: TwoTermParams, N):
     return p.E + p.A / (N ** p.alpha) + p.B / (N ** p.beta)
@@ -141,8 +174,37 @@ def predict_two_term(p: TwoTermParams, N):
 def huber_loglike(residuals, delta=1e-3):
     return np.sum(huber_logpdf(residuals, delta=delta))
 
-def lr_test(loglike_small, k_small, loglike_big, k_big):
-    """Return LR statistic and p-value comparing nested models."""
+def lr_test(N, L, *args, **kwargs) -> LRTResult:
+    """Calibrated bootstrap likelihood-ratio test for a second power-law term in N (DM-1b), one ladder at a time.
+
+        res = lr_test(N, L)             # res.detect, res.p_value, res.T, res.one_term, res.two_term
+        res = lr_test(N, L, B=1000, rng=0)
+
+    A parametric bootstrap of T = npts * ln(RSS_1 / RSS_2) (Gaussian noise on L), implemented in
+    py_src/two_term_lrt.py as a verbatim port of experiments/dm1_power_analysis/dm1b.py; pooled null rejection 0.049
+    at level 0.05 (DM-1b, 12,000 null ladders). It needs at least 7 points and raises InsufficientDataError below
+    that. In the result, two_term.alpha is the FAST exponent and two_term.beta the slow one.
+
+    This replaced the chi-square test on the Huber objective, which was not calibrated (folder 16: its statistic sat
+    4e4 to 9e4 times below the 5.99 cutoff on Chinchilla, so it could never reject). Calling the old form,
+    lr_test(loglike_small, k_small, loglike_big, k_big), raises TypeError.
+    """
+    if args or np.ndim(N) == 0:
+        raise TypeError(
+            "lr_test(loglike_small, k_small, loglike_big, k_big) was removed because its chi-square statistic on the "
+            "Huber objective is not calibrated (experiments/16_*). Call lr_test(N, L) for the bootstrap test, or "
+            "lr_test_chi2_uncalibrated(...) to reproduce the old number.")
+    return bootstrap_lr_test(N, L, **kwargs)
+
+
+def lr_test_chi2_uncalibrated(loglike_small, k_small, loglike_big, k_big):
+    """The OLD lr_test: 2 * (loglike_big - loglike_small) referred to chi-square(k_big - k_small).
+
+    Kept only to reproduce the folder 16 finding. The Huber objective is not a likelihood (delta = 1e-3 makes it ~1e-5
+    in these units), so the statistic never reaches the cutoff and the test cannot reject; do not use it to decide.
+    """
+    warnings.warn("lr_test_chi2_uncalibrated is not calibrated and cannot reject; use lr_test(N, L)",
+                  UserWarning, stacklevel=2)
     stat = 2.0 * (loglike_big - loglike_small)
     dof = k_big - k_small
     p = 1.0 - chi2.cdf(stat, dof)
@@ -227,68 +289,41 @@ if __name__ == "__main__":
     print()
     print("-" * 80)
     
-    # Fit two-term N-only using a slice at fixed D (mimic an N-ladder)
-    print("(2) FITTING TWO-TERM N-ONLY LAW: L(N) = E + A/N^α + B/N^β with β < α")
+    # Fit two-term N-only on a genuine N-ladder: N varies, D is held fixed (a slice of the grid cannot be used: the
+    # old narrow D-band selected 0 points and the script silently fitted all 400 points, with D varying, instead).
+    print("(2) FITTING TWO-TERM N-ONLY LAW: L(N) = E + A/N^α + B/N^β with β < α  (α is the fast exponent)")
     print()
-    # Take a narrow band around the median D value
-    med_D = np.median(DD)
-    mask = (DD > med_D * 0.9) & (DD < med_D * 1.1)
-    print(f"  Selected {mask.sum()} points for N-ladder (D around {med_D:.2e})")
-    
-    if mask.sum() >= 10:  # Need enough points for fitting
-        tp = fit_two_term_N_only(NN[mask], L[mask])
-    else:
-        # Use entire dataset for N-only fit if not enough points in band
-        print("  (Using all data since not enough points in narrow D-band)")
-        tp = fit_two_term_N_only(NN, L)
-    
+    D_FIX = float(np.median(DD))
+    N_lad = np.geomspace(1e7, 1e11, 20)
+    L_lad = synth_joint(N_lad, np.full_like(N_lad, D_FIX), seed=1)
+    print(f"  N-ladder: {len(N_lad)} sizes in [{N_lad.min():.1e}, {N_lad.max():.1e}] at fixed D = {D_FIX:.2e}")
+    print("  (true law along N is one term plus a constant: E + B/D^β is absorbed into the floor)")
+
+    # fit_two_term_N_only raises on an empty or too-small ladder; there is deliberately no fallback to other data.
+    tp = fit_two_term_N_only(N_lad, L_lad)
+
     print(f"  E     = {tp.E:.4f}")
     print(f"  A     = {tp.A:.2f}")
-    print(f"  α     = {tp.alpha:.4f}")
+    print(f"  α     = {tp.alpha:.4f}  (fast)")
     print(f"  B     = {tp.B:.2f}")
-    print(f"  β     = {tp.beta:.4f}")
+    print(f"  β     = {tp.beta:.4f}  (slow)")
     print(f"  Constraint satisfied: β < α? {tp.beta < tp.alpha}")
+    print(f"  Optimizer converged: {tp.converged}")
     print()
     print("-" * 80)
 
-    # LR test between 1-term (A-only) and 2-term (A+B) on the N-ladder
-    # Fit a 1-term baseline by zeroing B (quick-and-dirty via optimization with B tiny)
-    def fit_one_term_N_only(N, L):
-        def obj(theta):
-            # theta = [u_alpha, e_raw, a_raw]
-            u_alpha, e_raw, a_raw = theta
-            alpha = softplus(u_alpha) + 1e-6
-            E = np.exp(e_raw); A = np.exp(a_raw); B = 1e-30; beta = 0.5*alpha
-            t1 = np.log(A) - alpha * np.log(N)
-            t2 = np.log(B) - beta * np.log(N)
-            t3 = np.log(E) + 0.0 * np.log(N)
-            r = logsumexp(np.vstack([t1, t2, t3]), axis=0) - np.log(L)
-            return np.sum(huber(r))
-        res = minimize(obj, np.array([np.log(0.3), np.log(np.median(L)), np.log(np.median(L))]), method="L-BFGS-B")
-        u_alpha, e_raw, a_raw = res.x
-        alpha = softplus(u_alpha) + 1e-6
-        return TwoTermParams(np.exp(e_raw), np.exp(a_raw), alpha, 0.0, 1e-6)
-
-    # Use the same data for LR test as we used for two-term fit
-    print("(3) LIKELIHOOD-RATIO TEST: 1-term vs 2-term N-only model")
+    # Calibrated bootstrap LRT (DM-1b) for a second term on the same ladder.
+    print("(3) BOOTSTRAP LIKELIHOOD-RATIO TEST: 1-term vs 2-term N-only model (lr_test)")
     print()
-    test_N = NN[mask] if mask.sum() >= 10 else NN
-    test_L = L[mask] if mask.sum() >= 10 else L
-    
-    one = fit_one_term_N_only(test_N, test_L)
-    r1 = residuals_two_term(one, test_N, test_L)
-    r2 = residuals_two_term(tp, test_N, test_L)
-    ll1 = huber_loglike(r1); ll2 = huber_loglike(r2)
-    stat, dof, p = lr_test(ll1, k_small=3, loglike_big=ll2, k_big=5)
-    
-    print(f"  Test statistic: {stat:.2f}")
-    print(f"  Degrees of freedom: {dof}")
-    print(f"  p-value: {p:.3e}")
-    
-    if p < 0.05:
-        print(f"  ✓ Second term is statistically significant (p < 0.05)")
+    res = lr_test(N_lad, L_lad, B=100, rng=0, early_stop=True)
+    print(f"  Test statistic T = n ln(RSS_1/RSS_2): {res.T:.4g}")
+    print(f"  Bootstrap statistics reaching T: {res.k_exceed} of {res.B_used}")
+    print(f"  p-value: {res.p_value:.3g}   (level {res.level}; B = {res.B}, so detection needs k <= "
+          f"{int(np.floor(res.level * (res.B + 1) + 1e-9)) - 1})")
+    if res.detect:
+        print("  ✓ Second term detected at the 5% level")
     else:
-        print(f"  × Second term is NOT statistically significant (p >= 0.05)")
+        print("  × Second term NOT detected at the 5% level (the ladder has one term by construction)")
     print()
     print("=" * 80)
     print("SCALING LAWS FIT TEST COMPLETED SUCCESSFULLY!")
