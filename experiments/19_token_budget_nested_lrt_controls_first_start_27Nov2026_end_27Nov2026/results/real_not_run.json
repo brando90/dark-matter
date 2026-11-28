@@ -1,0 +1,10 @@
+{
+ "rw": {
+  "gates": {
+   "null": true,
+   "fast03": true,
+   "fast01": false
+  },
+  "all_gates_passed": false
+ }
+}

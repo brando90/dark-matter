@@ -1,0 +1,115 @@
+%% title: The bootstrap likelihood-ratio test is now \texttt{lr\_test}, and the two-term fitter fails loudly (11-27-2026)
+%% result-date: 11-27-2026
+%% result-time: 17:10
+%% experiment: 17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026
+%% headline: The port of DM-1b's bootstrap likelihood-ratio test matches it in 220 of 220 sampled rows and rejects 33 of 600 additive-noise null ladders (0.055), but with multiplicative noise it rejects 0.115 pooled, so a detection is weaker evidence than five percent suggests.
+% Fragment with no document class. Generated from the experiment's results.md; every number is copied from it, never retyped.
+% result-date is the day this result first lands on main; correct it in this header if the push happens on another day.
+
+\subsection*{Bottom line}
+
+\texttt{lr\_\allowbreak{}test(N, L)} in \texttt{py\_\allowbreak{}src/\allowbreak{}scaling\_\allowbreak{}laws\_\allowbreak{}fit.py} now runs the calibrated bootstrap test that DM-1b already had, instead of a chi-square test that could never reject. The fitter block is the same text as in \texttt{dm1b.py} after three renames, and 220 of 220 sampled committed DM-1b rows come out identical in every decision field. On six hundred fresh one-term ladders with additive noise it rejects 33 times, a rate of 0.055, inside its 0.07 gate, and it finds the strong second term in 40 of 40 ladders. It cannot see the weak second term that DM-1b says the data cannot resolve, and it says so, 2 of 40. \texttt{fit\_\allowbreak{}two\_\allowbreak{}term\_\allowbreak{}N\_\allowbreak{}only} and \texttt{lr\_\allowbreak{}test} now raise on an empty, too-small, non-finite or non-positive selection, and the repo smoke test, which used to fit all 400 grid points of a table whose data size also varied after selecting zero points, now fits a genuine twenty-point N-ladder. One result goes against easy use: when I repeated the null check with multiplicative noise, the rejection rate rose to 0.115 pooled and to 0.175 where the loss spans about two to ten. That check was not planned, but it is the one that matters for real ladders.
+
+
+\subsection*{Results}
+
+Every row is copied from results/report\_numbers.txt, which report\_numbers.py prints from the saved files in results/. The last column is the item number in that file. Run check\_results\_md.py to confirm that every number in a row appears in the items the row cites.
+
+\subsubsection*{Port parity (criteria 1 and 2)}
+
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.685\linewidth}>{\raggedright\arraybackslash}p{0.165\linewidth}r}
+\toprule
+\textbf{Metric} & \textbf{Value} & \textbf{Item} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Fitter block identical to dm1b.py after three renames, lines compared & identical, 187 & 1 \\
+Sampled committed DM-1b rows reproduced in every decision field & 220 of 220 & 2 \\
+Mismatches in k, refits used, decision, T and p & 0, 0, 0, 0, 0 & 2 \\
+Largest relative difference in T & 1.8e-16 & 2 \\
+Detections, port against committed rows & 118 against 118 & 2 \\
+\end{longtable}
+}
+
+\subsubsection*{Calibration and power on fresh ladders, additive noise (criteria 3 and 4)}
+
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.489\linewidth}>{\raggedright\arraybackslash}p{0.361\linewidth}r}
+\toprule
+\textbf{Metric} & \textbf{Value} & \textbf{Item} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Null cell, 17 points: ladders rejected, rate, exact 95\% interval & 6 of 200, 0.03, 0.0111 to 0.0642 & 3 \\
+Null cell, 13 points & 10 of 200, 0.05, 0.0242 to 0.09 & 4 \\
+Null cell, 9 points & 17 of 200, 0.085, 0.0503 to 0.1326 & 5 \\
+Pooled null rejection, gates 0.07 pooled and 0.1 per cell & 33 of 600, 0.055, 0.0382 to 0.0764 & 6 \\
+Power, positive control, 33 points, gate at least 36 & 40 of 40, 0.9119 to 1.0 & 7 \\
+Power, weak cell, 9 points, DM-1b's power 0.05 & 2 of 40, 0.05, 0.0061 to 0.1692 & 8 \\
+Criteria 1, 2, 3 and 4 & pass, pass, pass, pass & 9 \\
+\end{longtable}
+}
+
+\subsubsection*{Post hoc: multiplicative noise (not preregistered)}
+
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.441\linewidth}>{\raggedright\arraybackslash}p{0.409\linewidth}r}
+\toprule
+\textbf{Metric} & \textbf{Value} & \textbf{Item} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+17 points, loss 2.02 to 9.94: one-term ladders rejected & 35 of 200, 0.175, 0.125 to 0.2349 & 13 \\
+13 points, loss 2.02 to 5.49 & 24 of 200, 0.12, 0.0784 to 0.1733 & 14 \\
+9 points, loss 2.01 to 3.43 & 10 of 200, 0.05, 0.0242 to 0.09 & 15 \\
+Pooled, relative noise sd 0.005 & 69 of 600, 0.115, 0.0906 to 0.1433 & 16 \\
+\end{longtable}
+}
+
+\subsubsection*{Loud failure (criterion 5)}
+
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.510\linewidth}>{\raggedright\arraybackslash}p{0.340\linewidth}r}
+\toprule
+\textbf{Metric} & \textbf{Value} & \textbf{Item} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+pytest on test\_fail\_loud.py & 17 passed in 4.45s & 10 \\
+\end{longtable}
+}
+
+
+\subsection*{Caveats}
+
+\begin{enumerate}
+  \item The additive-noise calibration is on DM-1's own generator: one-term law with E = 1.69 and exponent 0.34, ladders of 9 to 33 points between 1e5 and 1e9 parameters. It says nothing about ladders of other shapes.
+  \item The worst additive cell, 9 points with noise sd 0.02, came out at 0.085. DM-1b measured 0.070 for the same design. The interval 0.0503 to 0.1326 covers both, so this run neither confirms nor rules out a mild over-rejection on short ladders. It is inside the preregistered cell gate of 0.1.
+  \item The multiplicative-noise check has one relative noise level and one law. It shows the direction and rough size of the problem, not a calibration curve. Applying the port to the Porian grid, as folder 15 did, inherits this caveat, and I did not re-run folder 15.
+  \item Criterion 5 was not prospective: the tests were written and passed before the criteria were committed.
+  \item The fitter block is the exact DM-1b code. The same weak spots apply: DM-1b's fits can land on the bounds, and the bootstrap draws Gaussian noise whose sd comes from the one-term fit alone.
+  \item This ran in Python 3.13 with numpy 2.5.3, not the Python 3.11 the repository pins. The committed DM-1b rows were produced on a Slurm cluster (Sherlock job 48518244); I do not know its Python or numpy versions, and the match to 1.8e-16 holds across whatever the difference was.
+\end{enumerate}
+
+
+\subsection*{Appendix: methods, harness and model}
+\subsubsection*{Appendix: what ran}
+
+\begin{enumerate}
+  \item Library: \texttt{py\_\allowbreak{}src/\allowbreak{}two\_\allowbreak{}term\_\allowbreak{}lrt.py} (new; DM-1b's fitter block plus \texttt{bootstrap\_\allowbreak{}lr\_\allowbreak{}test}, \texttt{fit\_\allowbreak{}one\_\allowbreak{}and\_\allowbreak{}two\_\allowbreak{}term}, the dataclasses and the error classes) and \texttt{py\_\allowbreak{}src/\allowbreak{}scaling\_\allowbreak{}laws\_\allowbreak{}fit.py} (\texttt{lr\_\allowbreak{}test} wrapper, \texttt{lr\_\allowbreak{}test\_\allowbreak{}chi2\_\allowbreak{}uncalibrated} kept with a warning, \texttt{fit\_\allowbreak{}two\_\allowbreak{}term\_\allowbreak{}N\_\allowbreak{}only} validation and convergence record, repaired smoke test).
+  \item Scripts: parity\_dm1b.py, calibration\_power.py, posthoc\_multiplicative\_noise.py, test\_fail\_loud.py, report\_numbers.py, check\_results\_md.py. Every extra term is additive: \texttt{E + a n\textasciicircum{}-p + b n\textasciicircum{}-(p+d)} on the loss.
+  \item Harness and model: Claude Code, claude-sonnet-5-5, CPU, two cores. The QA reviewers that read this folder are listed in the Mega QA section of the project report, not here.
+  \item Seeds: data \texttt{[cell, rep, 20261127]}, bootstrap the same with a trailing 1, parity sample 20261127.
+  \item Naming: in \texttt{two\_\allowbreak{}term.alpha} and \texttt{two\_\allowbreak{}term.beta}, alpha is the fast exponent (the larger one, matters at small N) and beta the slow one. DM-1b's own fit dictionary names them the other way round.
+\end{enumerate}
+
+\subsubsection*{Links}
+\begin{itemize}
+  \item results.md: \url{https://github.com/brando90/dark-matter/blob/main/experiments/17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026/results.md}
+  \item commit: \url{https://github.com/brando90/dark-matter/commit/98bbacc}
+\end{itemize}

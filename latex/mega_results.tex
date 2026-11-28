@@ -3,6 +3,9 @@
 \begin{longtable}{@{}r l r p{0.60\textwidth}@{}}
 \toprule No. & Result date & Exp. & Headline \\ \midrule \endhead
 1 & 11-26-2026 & 16 & The repo's two-term likelihood-ratio test cannot reject anything (largest statistic 43,482 to 93,597 times below its cutoff), and a second N term is neither supported nor excluded on Chinchilla, Pythia, OPT and Porian data. \\
+2 & 11-27-2026 & 17 & The port of DM-1b's bootstrap likelihood-ratio test matches it in 220 of 220 sampled rows and rejects 33 of 600 additive-noise null ladders (0.055), but with multiplicative noise it rejects 0.115 pooled, so a detection is weaker evidence than five percent suggests. \\
+3 & 11-27-2026 & 18 & Removing the 11 Chinchilla runs with under one token per parameter moves the joint fit's token exponent from 0.455748 to 0.339172 (published 0.36) and its residual RMSE from 0.096138 to 0.014379; 200 random removals never do. \\
+4 & 11-27-2026 & 19 & On owt2 a fast N term is detected (p = 0.034965) but not robustly (p = 0.121756 under correlated noise); rw has no verdict because its power gate failed at 15 of 20 against 16 needed. \\
 \bottomrule
 \end{longtable}
 
@@ -10,3 +13,18 @@
 \section{CPU tests of the two-term scaling conjecture: likelihood-ratio test, Chinchilla extra terms and Porian parameter counts (11-26-2026)}
 \ResultMeta{1}{16}{11-26-2026 10:56}{16_two_term_lrt_calibration_chinchilla_backtest_porian_n_count_start_25Nov2026_end_26Nov2026}
 \input{results/16_two_term_lrt_calibration_chinchilla_porian_counts}
+
+\clearpage
+\section{The bootstrap likelihood-ratio test is now \texttt{lr\_test}, and the two-term fitter fails loudly (11-27-2026)}
+\ResultMeta{2}{17}{11-27-2026 17:10}{17_bootstrap_lrt_port_parity_calibration_start_27Nov2026_end_27Nov2026}
+\input{results/17_bootstrap_lrt_port_parity_calibration}
+
+\clearpage
+\section{Experiments 02, 03, 04 and 09 with and without the 11 Chinchilla runs under one token per parameter (11-27-2026)}
+\ResultMeta{3}{18}{11-27-2026 17:28}{18_short_runs_with_without_exp02_03_04_09_start_27Nov2026_end_27Nov2026}
+\input{results/18_short_runs_with_without_chinchilla_runs}
+
+\clearpage
+\section{Experiment 19 (11-27-2026): nested joint-law test of a fast N term, controls first}
+\ResultMeta{4}{19}{11-27-2026 18:10}{19_token_budget_nested_lrt_controls_first_start_27Nov2026_end_27Nov2026}
+\input{results/19_nested_joint_law_fast_term_controls_first}

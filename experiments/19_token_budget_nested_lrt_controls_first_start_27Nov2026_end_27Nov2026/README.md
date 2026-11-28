@@ -1,11 +1,11 @@
 # Experiment 19 (11-27-2026): token-budget test redesigned as a calibrated nested test, controls first
 
-**Doc link:** <https://github.com/brando90/dark-matter/blob/main/experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026/README.md>
+**Doc link:** <https://github.com/brando90/dark-matter/blob/main/experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026_end_27Nov2026/README.md>
 
 **TLDR:** Folder 14 asked whether the additive data term (the token budget) explains the small-end excess of Porian et al.'s tuned-constant ladders, but its extrapolation estimator failed its own controls. This folder replaces it with a nested likelihood-ratio test on all sizes at once and fixes three control gates (null at most 4 of 20 detections, planted +0.3 and +0.1 at least 16 of 20) before any control or real fit is run; the real ladders are analysed only for a dataset whose three gates pass.
 
 Date: 11-27-2026. Owner: Claude Code, Claude Sonnet 5.5 (not the pinned Fable 5.1 max), Python CPU in a two-core sandbox, no cluster.
-Status: **PREREGISTERED. Controls not run. Real data not fitted.** Result: pending (section at the end).
+Status: **DONE 11-27-2026.** Preregistered in commit 0683e8a; the controls and the gated real-data stage were run afterwards and no rule, grid, seed or control was changed. Result: section at the end and [results.md](results.md).
 
 ## Dark-matter question
 
@@ -68,12 +68,12 @@ Porian's small-end excess on these ladders is known from DM-2, DM-3 and folder 1
 `build_designs.py`, `controls.py`, `summarize_controls.py`, `real_data.py` (gated), `test_nested_lrt.py`, library `py_src/nested_joint_lrt.py`.
 
 ```bash
-python3 -I experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026/test_nested_lrt.py
-python3 -I experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026/controls.py --workers 2
-python3 -I experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026/summarize_controls.py
-python3 -I experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026/real_data.py
+python3 -I experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026_end_27Nov2026/test_nested_lrt.py
+python3 -I experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026_end_27Nov2026/controls.py --workers 2
+python3 -I experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026_end_27Nov2026/summarize_controls.py
+python3 -I experiments/19_token_budget_nested_lrt_controls_first_start_27Nov2026_end_27Nov2026/real_data.py
 ```
 
 ## Result
 
-Pending.
+Verdict: **owt2: FAST TERM DETECTED (T 4.652, p 0.034965 with 1000 draws), not robust to correlated noise (p 0.121756 at correlation 0.5). rw: no verdict, because gate G3 failed at 15 of 20 (16 needed), so no real-data fit was run.** Gates: null 2 of 20 false detections on both datasets, planted +0.3 detected 20 of 20 on both, planted +0.1 detected 15 of 20 on rw and 20 of 20 on owt2. Preregistered predictions 1, 2 and 5 passed; 3 (rw 15 of 20) and 4 (the misspecified data term gave 0 of 20 false detections, not at least 5) failed. Tables, the post hoc caveat that the fitted fast-term size is not readable alone (under the null a fitted fast term is often the slow term relabelled), and the provenance-checked numbers are in [results.md](results.md), `results/report_numbers.txt` and `check_results_md.py`.

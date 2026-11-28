@@ -1,0 +1,48 @@
+## Design: the real ladders the controls are built on
+1. rw: 65 points, tied parameter counts 5.173e+06 to 9.017e+08, tokens per parameter slices [5, 10, 20, 40, 80], per-point sd 0.0019 to 0.0619, sd at the smallest model 0.0619.
+2. owt2: 65 points, tied parameter counts 5.173e+06 to 9.017e+08, tokens per parameter slices [5, 10, 20, 40, 80], per-point sd 0.0027 to 0.0344, sd at the smallest model 0.0123.
+
+## Gates and stress controls per dataset (20 replicates each, 200 bootstrap draws each, detect = p at most 0.05)
+3. rw, G1 null (joint law only): 2 of 20 detections (rate 0.10, 95% Wilson interval 0.03 to 0.30); median p 0.2090, median T 1.265, median fitted fast term at the smallest model 0.051 nats; gate rule: detections <= 4 of 20, PASSED.
+4. rw, G2 planted +0.3 fast term: 20 of 20 detections (rate 1.00, 95% Wilson interval 0.84 to 1.00); median p 0.0050, median T 39.582, median fitted fast term at the smallest model 0.350 nats; gate rule: detections >= 16 of 20, PASSED.
+5. rw, G3 planted +0.1 fast term: 15 of 20 detections (rate 0.75, 95% Wilson interval 0.53 to 0.89); median p 0.0274, median T 6.258, median fitted fast term at the smallest model 0.229 nats; gate rule: detections >= 16 of 20, FAILED.
+6. rw, S1 correlated noise (0.5 within a width): 4 of 20 detections (rate 0.20, 95% Wilson interval 0.08 to 0.42); median p 0.6592, median T 0.000, median fitted fast term at the smallest model 0.034 nats; report only, no gate.
+7. rw, S2 misspecified data term: 0 of 20 detections (rate 0.00, 95% Wilson interval 0.00 to 0.16); median p 0.7090, median T 0.000, median fitted fast term at the smallest model 0.000 nats; report only, no gate.
+8. owt2, G1 null (joint law only): 2 of 20 detections (rate 0.10, 95% Wilson interval 0.03 to 0.30); median p 0.5522, median T 0.025, median fitted fast term at the smallest model 0.533 nats; gate rule: detections <= 4 of 20, PASSED.
+9. owt2, G2 planted +0.3 fast term: 20 of 20 detections (rate 1.00, 95% Wilson interval 0.84 to 1.00); median p 0.0050, median T 56.910, median fitted fast term at the smallest model 0.251 nats; gate rule: detections >= 16 of 20, PASSED.
+10. owt2, G3 planted +0.1 fast term: 20 of 20 detections (rate 1.00, 95% Wilson interval 0.84 to 1.00); median p 0.0050, median T 12.305, median fitted fast term at the smallest model 0.101 nats; gate rule: detections >= 16 of 20, PASSED.
+11. owt2, S1 correlated noise (0.5 within a width): 6 of 20 detections (rate 0.30, 95% Wilson interval 0.15 to 0.52); median p 0.1791, median T 1.395, median fitted fast term at the smallest model 0.050 nats; report only, no gate.
+12. owt2, S2 misspecified data term: 0 of 20 detections (rate 0.00, 95% Wilson interval 0.00 to 0.16); median p 0.9279, median T 0.000, median fitted fast term at the smallest model 0.000 nats; report only, no gate.
+
+## Gate verdict per dataset
+13. rw: G1 passed, G2 passed, G3 failed; all three gates passed: False; detections 2, 20 and 15 of 20.
+14. owt2: G1 passed, G2 passed, G3 passed; all three gates passed: True; detections 2, 20 and 20 of 20.
+
+## Real data (only for a dataset whose three gates passed)
+15. rw: real-data test not run, because the gates did not all pass (failed: fast01).
+16. owt2: statistic T 4.652, bootstrap p-value 0.034965 with 1000 draws, verdict FAST TERM DETECTED; noise scale sigma_hat 9.512 times the per-point sd; fast term at the smallest model 0.194 nats.
+17. owt2: joint law fit M1 exponents alpha 0.2069, beta 0.3323, coefficients E 1.8125, A 2.4544, B 0.6448; with the fast term M2 exponents alpha 0.1488, beta 0.3320, gamma 2.0190, coefficients E 1.4713, A 2.5560, B 0.6485, C 5.3503.
+18. owt2: sensitivity bootstrap p-value with within-width correlated noise (correlation 0.5, 500 draws): 0.121756.
+
+## Preregistered predictions
+19. Prediction 1 (G1 passes on both datasets): PASSED; null detections 2 and 2 of 20, limit 4.
+20. Prediction 2 (G2 passes on both datasets): PASSED; detections 20 and 20 of 20, minimum 16.
+21. Prediction 3 (G3 passes on both datasets): FAILED; detections 15 and 20 of 20, minimum 16.
+22. Prediction 4 (S2 gives at least 5 of 20 false detections on at least one dataset): FAILED; S2 detections 0 and 0 of 20.
+23. Prediction 5 (S1 gives more false detections than G1 on at least one dataset): PASSED; S1 detections 4 and 6 against G1 2 and 2 of 20.
+
+## Descriptive fast-term size and its limits (post hoc, not preregistered)
+24. rw, G1 null (joint law only): 7 of 20 replicates report a fitted fast term above 1.0 nat at the smallest model; the true slow term A n^-alpha is 1.119 nats there, so these report the slow term relabelled as fast; 3 of those 7 have T below 1.0 and p above 0.05; their median fitted gamma is 0.616 against the true alpha 0.6.
+25. rw, G2 planted +0.3 fast term: 3 of 20 replicates report a fitted fast term above 1.0 nat at the smallest model; the true slow term A n^-alpha is 1.119 nats there, so these report the slow term relabelled as fast; 0 of those 3 have T below 1.0 and p above 0.05; their median fitted gamma is 0.848 against the true alpha 0.6.
+26. rw, G3 planted +0.1 fast term: 6 of 20 replicates report a fitted fast term above 1.0 nat at the smallest model; the true slow term A n^-alpha is 1.119 nats there, so these report the slow term relabelled as fast; 2 of those 6 have T below 1.0 and p above 0.05; their median fitted gamma is 0.652 against the true alpha 0.6.
+27. owt2, G1 null (joint law only): 10 of 20 replicates report a fitted fast term above 1.0 nat at the smallest model; the true slow term A n^-alpha is 1.119 nats there, so these report the slow term relabelled as fast; 8 of those 10 have T below 1.0 and p above 0.05; their median fitted gamma is 0.604 against the true alpha 0.6.
+28. owt2, G2 planted +0.3 fast term: 1 of 20 replicates report a fitted fast term above 1.0 nat at the smallest model; the true slow term A n^-alpha is 1.119 nats there, so these report the slow term relabelled as fast; 0 of those 1 have T below 1.0 and p above 0.05; their median fitted gamma is 0.905 against the true alpha 0.6.
+29. owt2, G3 planted +0.1 fast term: 1 of 20 replicates report a fitted fast term above 1.0 nat at the smallest model; the true slow term A n^-alpha is 1.119 nats there, so these report the slow term relabelled as fast; 0 of those 1 have T below 1.0 and p above 0.05; their median fitted gamma is 0.675 against the true alpha 0.6.
+30. rw, G3 planted +0.1 fast term: the 5 replicates that were not detected have p-values 0.0547, 0.0746, 0.2836, 0.3383, 0.3582; the gate needed 16 detections.
+31. rw, G1 null: sigma_hat (noise scale as a multiple of the per-point sd) has median 1.003 and range 0.850 to 1.306 over 20 replicates.
+32. owt2, G1 null: sigma_hat (noise scale as a multiple of the per-point sd) has median 1.028 and range 0.804 to 1.173 over 20 replicates.
+33. owt2 real ladder: fitted fast term C n^-gamma (gamma 2.019) in nats at the five smallest model sizes: 5.17M: 0.194, 7.50M: 0.091, 9.81M: 0.053, 15.60M: 0.021, 22.49M: 0.010; it is below 0.01 nats from 22.5 million parameters upward; the real sigma_hat is 9.512, 9.3 times the median null-control value.
+
+## Cost of the control run
+34. rw: 100 control replicates took 0.22 CPU hours in total, a median of 7.8 seconds each (range 6.6 to 10.7).
+35. owt2: 100 control replicates took 0.22 CPU hours in total, a median of 7.8 seconds each (range 6.7 to 16.1).

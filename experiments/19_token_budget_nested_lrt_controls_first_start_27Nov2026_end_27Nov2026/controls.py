@@ -78,7 +78,7 @@ def main():
     for ds in DATASETS:
         path = os.path.join(HERE, "results", f"controls_{ds}.csv")
         if os.path.exists(path):
-            done |= {(ds, c, int(r)) for c, r in pd.read_csv(path)[["control", "rep"]].itertuples(index=False)}
+            done |= {(ds, c, int(r)) for c, r in pd.read_csv(path, keep_default_na=False)[["control", "rep"]].itertuples(index=False)}
     tasks = [(ds, c, r) for c in controls for ds in DATASETS for r in range(REPS) if (ds, c, r) not in done]
     print(f"{len(tasks)} replicates to run, {len(done)} already done", flush=True)
     with Pool(a.workers) as pool:
